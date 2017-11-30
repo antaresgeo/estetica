@@ -21,13 +21,25 @@ Route::get('/user/{id}/delete', [
     'uses' => 'UserController@destroy',
     'as' => 'user.destroy'
 ]);
+Route::get('/users', [
+    'uses' => 'UserController@anyData',
+    'as' => 'user.list'
+]);
 Route::resource('/sucursal', 'SucursalController');
 Route::get('/sucursal/{id}/delete', [
     'uses' => 'SucursalController@destroy',
     'as' => 'sucursal.destroy'
 ]);
+Route::get('/sucursales', [
+    'uses' => 'SucursalController@anyData',
+    'as' => 'sucursal.list'
+]);
 Route::resource('/cliente', 'ClienteController');
 Route::get('/cliente/{id}/delete', [
     'uses' => 'ClienteController@destroy',
     'as' => 'cliente.destroy'
+]);
+Route::get('/clientes', [
+    'uses' => 'ClienteController@anyData',
+    'as' => 'cliente.list'
 ]);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Sucursal;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 class SucursalController extends Controller
 {
@@ -90,5 +91,10 @@ class SucursalController extends Controller
         $sucursal->delete();
         flash('Sucursal '. $sucursal->nombre .' borrada con exito.')->success();
         return redirect()->route('sucursal.index');
+    }
+
+    public function anyData()
+    {
+        return Datatables::of(Sucursal::query())->make(true);
     }
 }

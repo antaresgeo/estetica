@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cliente;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 class ClienteController extends Controller
 {
@@ -92,5 +93,10 @@ class ClienteController extends Controller
         $cliente->forceDelete();
         flash('Cliente '. $cliente->nombre .' borrado con exito.')->success();
         return redirect()->route('cliente.index');
+    }
+
+    public function anyData()
+    {
+        return Datatables::of(Cliente::query())->make(true);
     }
 }

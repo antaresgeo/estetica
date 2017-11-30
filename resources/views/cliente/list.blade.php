@@ -26,15 +26,40 @@
     {{-- <th>id</th> --}}
     <th>Nombre</th>
     <th>Telefono</th>
-    <th>Identificacion</th>
+    <th>DNI</th>
     <th>Acción</th>
 </tr>
 @endsection
 
-@section('tbody')
+@push('scripts')
+<script>
+$(function() {
+    $('#datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        language: {
+            "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+        },
+        ajax: '{!! route('cliente.list') !!}',
+        columns: [
+            { data: 'nombre', name: 'nombre' },
+            { data: 'telefono', name: 'telefono' },
+            { data: 'identificacion', name: 'identificacion' },
+            { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
+                var edit = '{{ route('cliente.edit', ':id')}}'.replace(':id', data);
+                var destroy = '{{ route('cliente.destroy', ':id') }}'.replace(':id', data);
+                return '<a href="'+ edit +'" class="btn btn-warning" style="margin-right: 7px;"><i class="fa fa-pencil" aria-hidden="true"></i></a><a href="'+destroy+'" class="btn btn-danger" style="margin-right: 7px;"><i class="fa fa-trash" aria-hidden="true"></i></a>'
+            }}
+        ]
+    });
+});
+</script>
+@endpush
+
+{{-- @section('tbody')
 @foreach ($clientes as $cliente)
 <tr>
-    {{-- <td>{{ $cliente->id }}</td> --}}
+    <td>{{ $cliente->id }}</td>
     <td>{{ $cliente->nombre }}</td>
     <td>{{ $cliente->telefono }}</td>
     <td>{{ $cliente->identificacion }}</td>
@@ -48,8 +73,8 @@
     </td>
 </tr>
 @endforeach
-@endsection
+@endsection --}}
 
-@section('footer')
+{{-- @section('footer')
 {{ $clientes->links() }}
-@endsection
+@endsection --}}

@@ -29,10 +29,33 @@
 </tr>
 @endsection
 
-@section('tbody')
+@push('scripts')
+<script>
+$(function() {
+    $('#datatable').DataTable({
+        processing: true,
+        serverSide: true,
+        language: {
+            "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+        },
+        ajax: '{!! route('sucursal.list') !!}',
+        columns: [
+            { data: 'nombre', name: 'nombre' },
+            { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
+                var edit = '{{ route('sucursal.edit', ':id')}}'.replace(':id', data);
+                var destroy = '{{ route('sucursal.destroy', ':id') }}'.replace(':id', data);
+                return '<a href="'+ edit +'" class="btn btn-warning" style="margin-right: 7px;"><i class="fa fa-pencil" aria-hidden="true"></i></a><a href="'+destroy+'" class="btn btn-danger" style="margin-right: 7px;"><i class="fa fa-trash" aria-hidden="true"></i></a>'
+            }}
+        ]
+    });
+});
+</script>
+@endpush
+
+{{-- @section('tbody')
 @foreach ($sucursales as $sucursal)
 <tr>
-    {{-- <td>{{ $sucursal->id }}</td> --}}
+    <td>{{ $sucursal->id }}</td>
     <td>{{ $sucursal->nombre }}</td>
     <td>
         <a href="{{ route('sucursal.edit', $sucursal->id)}}" class="btn btn-warning">
@@ -44,8 +67,8 @@
     </td>
 </tr>
 @endforeach
-@endsection
+@endsection --}}
 
-@section('footer')
+{{-- @section('footer')
 {{ $sucursales->links() }}
-@endsection
+@endsection --}}

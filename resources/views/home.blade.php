@@ -18,6 +18,21 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <div id="calendar"></div>
+    </div>
 </div>
-
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#calendar').fullCalendar({
+        header: {
+			left: 'promptResource today prev,next',
+			center: 'title',
+			right: 'timelineDay,timelineThreeDays,agendaWeek,month'
+	}})
+});
+</script>
+@endpush

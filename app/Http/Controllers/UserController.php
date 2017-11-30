@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 class UserController extends Controller
 {
@@ -93,5 +94,10 @@ class UserController extends Controller
         $user->delete();
         flash('Usuario '. $user->name .' borrado con exito.')->success();
         return redirect()->route('user.index');
+    }
+
+    public function anyData()
+    {
+        return Datatables::of(User::query())->make(true);
     }
 }
