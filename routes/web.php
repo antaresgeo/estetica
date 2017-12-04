@@ -43,3 +43,21 @@ Route::get('/clientes', [
     'uses' => 'ClienteController@anyData',
     'as' => 'cliente.list'
 ]);
+Route::resource('/tratamiento', 'TratamientoController');
+Route::get('/tratamiento/{id}/delete', [
+    'uses' => 'TratamientoController@destroy',
+    'as' => 'tratamiento.destroy'
+]);
+Route::get('/tratamientos', [
+    'uses' => 'TratamientoController@anyData',
+    'as' => 'tratamiento.list'
+]);
+Route::resource('/reserva', 'ReservaController');
+Route::get('/reserva/{id}/delete', [
+    'uses' => 'ReservaController@destroy',
+    'as' => 'reserva.destroy'
+]);
+Route::get('/reservas', [
+    'uses' => 'ReservaController@anyData',
+    'as' => 'reserva.list'
+]);

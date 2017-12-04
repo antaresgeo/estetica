@@ -9,4 +9,8 @@ class Sucursal extends Model
     protected  $table = "sucursal";
 
     protected $fillable = [ 'nombre' ];
+
+    public function reservas(){
+        return $this->hasMany('App\Reserva');
+    }
 }
