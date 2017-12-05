@@ -18,8 +18,9 @@ class ReservaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        //dd($request->all());
         $reservas = Reserva::orderBy('id', 'ASC')->paginate(10);
         foreach ($reservas as $reserva) {
             $ct = ClienteTratamiento::find($reserva->cliente_tratamiento_id);
@@ -34,7 +35,7 @@ class ReservaController extends Controller
 
         }
         return $reservas;
-        // view('reserva.list')->with('reservas', $reservas);
+        // // view('reserva.list')->with('reservas', $reservas);
     }
 
     /**
@@ -127,5 +128,15 @@ class ReservaController extends Controller
     public function anyData()
     {
         return Datatables::of(Reserva::query())->make(true);
+    }
+
+    public function editar(Request $rq, Reserva $rs)
+    {
+      dd($rq->all());
+    }
+
+    public function cancelar(Request $rq, Reserva $rs)
+    {
+      dd($rq->all());
     }
 }

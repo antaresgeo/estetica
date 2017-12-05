@@ -49,60 +49,52 @@ function hideCita(estado) {
     return "inherit";
 }
 
-function formModal(data, self) {
+function formModal(data) {
     var formTemplete = "";
-    if (data.asignacionCita == null) {
-        formTemplete = `<div class="modal modal-c" id="formModal">
+    formTemplete = `<div class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <div class="collection">
-            <a href="#!" class="collection-item"  onclick="asignarAlmuerzo(${data.id}, ${data.almuerzo})"><i class="material-icons">local_dining</i>${des(data.almuerzo)} almuerzo</a>
-            <a href="#!" class="collection-item" onclick="listaMedicos(${data.id}, ${data.medico})"><i class="material-icons">person</i>Asignar Medico</a>
-            <a href="#!" class="collection-item" onclick="eliminarCalendario(${data.id})"><i class="material-icons">delete</i>Eliminar</a>
-        </div>
-        </div>
-        </div>`;
-    } else {
-        formTemplete = `<div class="modal modal-c" id="formModal">
-        <div class="modal-content">
-        <div class="collection">
-            <a href="#!" class="collection-item" onclick="listaMedicos(${data.id}, ${data.medico})"><i class="material-icons">person</i>Asignar Medico</a>
-        </div>
-        </div>`;
-    }
+          <div class="modal-header">
+            <h5 class="modal-title">${data.title}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="list-group">
+              <a href="/estetica/public/reserva/${data.id}/edit" class="list-group-item list-group-item-action">Editar reserva</a>
+              <a href="#" onclick="cancelarR(${data.id})" class="list-group-item list-group-item-action">Cancelar reserva</a>
+            </div>
+          </div>
+          <div class="modal-footer">
 
-    var query = $("#formModal");
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+    var query = $(".modal");
     if (query.length === 0) {
         $("body").append(formTemplete);
     } else {
         query.remove();
         $("body").append(formTemplete);
     }
-    $("#formModal").modal({
-        ready: function(modal, trigger) {
-            $('.tooltipped').tooltip({
-                delay: 50,
-                position: 'right'
-            });
-        }
-    });
-    $('#formModal').modal('open');
+    $(".modal").modal('show');
 }
 
 
-function eliminarCalendario(id) {
-    $('#formModal').modal('close');
-    if (confirm("¿Está seguro que desea borrar este calendario?") == true) {
+function cancelarR(id) {
+    $('.modal').modal('hide');
+    if (confirm("¿Está seguro que desea cancelar este calendario?") == true) {
         $.ajax({
-            url: '/agenda/calendario/form/' + id + '/',
+            url: '/estetica/public/reserva/cancelar/' + id ,
             type: 'POST',
             dataType: 'json',
-            data: {
-                eliminado: true
-            },
             success: function(response) {
                 $("#calendar").fullCalendar('removeEvents');
                 $("#calendar").fullCalendar('refetchEvents');
-                Materialize.toast('Borrado exitoso.', 2000);
+                alert("Eliminado.");
             },
             error: function(response) {
                 if (response.status == 400) {
@@ -132,10 +124,10 @@ function calendario() {
         },
         locale: 'es',
         navLinks: true, // can click day/week names to navigate views
-        selectable: true,
+        selectable: false,
         selectHelper: true,
         defaultView: 'agendaWeek',
-        editable: false,
+        editable: true,
         hiddenDays: [0],
         allDayDefault: false,
         allDaySlot: false,
@@ -145,164 +137,89 @@ function calendario() {
         slotEventOverlap: false,
         eventLimit: true, // allow "more" link when too many events
         slotDuration: '00:15:00',
-        events: [
-        {
-          title: 'All Day Event',
-          start: '2017-12-01',
-        },
-        {
-          title: 'Long Event',
-          start: '2017-12-07',
-          end: '2017-12-10'
-        },
-        {
-          id: 999,
-          title: 'Repeating Event',
-          start: '2017-12-09T16:00:00'
-        },
-        {
-          id: 999,
-          title: 'Repeating Event',
-          start: '2017-12-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2017-12-12',
-          end: '2017-12-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2017-12-12T10:30:00',
-          end: '2017-12-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2017-12-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2017-12-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2017-12-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2017-12-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2017-12-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2017-12-28'
-        }
-      ],
-        select: function(start, end) {
-            var fecha1 = new Date(start.format()),
-                fecha2 = new Date(end.format()),
-                resta = fecha2.getTime() - fecha1.getTime(),
-                minutos = Math.round(resta / 60000);
-
-          var eventData,
-              data;
-          data = {
-              almuerzo: false,
-              inicio: start.format('Y-MM-DD HH:mm:ss'),
-              fin: end.format('Y-MM-DD HH:mm:ss')
-          };
-          alert("Esto es un select");
-          //$(".full-height").show();
-          // $.ajax({
-          //     url: '/agenda/calendario/form/',
-          //     type: 'POST',
-          //     dataType: 'json',
-          //     contentType: "application/json; charset=utf-8",
-          //     data: JSON.stringify(data),
-          //     success: function(response) {
-          //         var data = response;
-          //         if(data.medico_id != null){
-          //             eventData = {
-          //                 id: data.id,
-          //                 almuerzo: data.almuerzo,
-          //                 medico: data.medico_id,
-          //                 title: '(M) - Espacio para cita',
-          //                 color: '#2196f3',
-          //                 start: start,
-          //                 end: end
-          //             };
-          //         }else{
-          //             eventData = {
-          //                 id: data.id,
-          //                 almuerzo: data.almuerzo,
-          //                 title: 'Espacio para cita',
-          //                 color: '#2196f3',
-          //                 start: start,
-          //                 end: end
-          //             };
-          //         }
-          //
-          //         $('#calendar').fullCalendar('renderEvent', eventData, true);
-          //         Materialize.toast('Guardado exitoso.', 1000);
-          //         $(".full-height").hide();
-          //
-          //     },
-          //     error: function(response) {
-          //         if (response.status == 400) {
-          //             if (response.responseJSON.fin) {
-          //                 alert("Fecha final: " + response.responseJSON.fin[0]);
-          //             }
-          //             if (response.responseJSON.inicio) {
-          //                 alert("Fecha inical: " + response.responseJSON.inicio[0]);
-          //             }
-          //             if (response.responseJSON.__all__) {
-          //                 alert(response.responseJSON.__all__[0]);
-          //             }
-          //         } else if (response.status == 403) {
-          //             alert(response.responseJSON.error);
-          //         }
-          //         $(".full-height").hide();
-          //
-          //     }
-          // });
-            $('#calendar').fullCalendar('unselect');
-        },
         eventClick: function(calEvent, jsEvent, view) {
             console.log(calEvent);
-            alert("Evento click");
+            formModal(calEvent)
             //formModal(calEvent, this);
             // change the border color just for fun
             //$(this).css('border-color', 'red');
 
         },
-        // events: function(start, end, timezone, callback) {
-        //     $(".full-height").show();
-        //     var date = new Date($('#calendar').fullCalendar('getDate').format());
-        //     $.ajax({
-        //         url: '/agenda/calendario/list/',
-        //         type: 'GET',
-        //         dataType: 'json',
-        //         data: {
-        //             inicio__week: date.getWeek(),
+         eventDrop: function(event, delta, revertFunc) {
+           console.log(event);
+            if (!confirm("Esta seguro que quiere realizar este cambio?")) {
+                revertFunc();
+            }else {
+                $.ajax({
+                    url: '/estetica/public/reserva/editar/'+ event.id,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                      start: event.start.format("Y-MM-DD HH:mm:ss"),
+                      end: event.end.format("Y-MM-DD HH:mm:ss")
+                    },
+                    success: function(response, status, jqXHR) {
+                      alert("Guardado");
+                    },
+                    error: function(response, status, errorThrown) {
+                        if (response.status == 403) {
+                            alert(response.responseJSON.error);
+                        }
+                    }
+                });
+            }
+        },
+         eventResize: function(event, delta, revertFunc) {
 
-        //         },
-        //         success: function(response, status, jqXHR) {
-        //             var events = response.object_list;
-        //             callback(events);
-        //             $(".full-height").hide();
-        //         },
-        //         error: function(response, status, errorThrown) {
-        //             if (response.status == 403) {
-        //                 alert(response.responseJSON.error);
-        //             }
-        //             $(".full-height").hide();
+            alert(event.title + " end is now " + event.end.format());
 
-        //         }
-        //     });
-        // }
+            if (!confirm("is this okay?")) {
+                revertFunc();
+            }else {
+                $.ajax({
+                    url: '/estetica/public/reserva/editar/'+ event.id,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                      start: event.start.format("Y-MM-DD HH:mm:ss"),
+                      end: event.end.format("Y-MM-DD HH:mm:ss")
+                    },
+                    success: function(response, status, jqXHR) {
+                      alert("Guardado");
+                    },
+                    error: function(response, status, errorThrown) {
+                        if (response.status == 403) {
+                            alert(response.responseJSON.error);
+                        }
+                    }
+                });
+            }
+        },
+        events: function(start, end, timezone, callback) {
+            $(".full-height").show();
+            var date = new Date($('#calendar').fullCalendar('getDate').format());
+            $.ajax({
+                url: '/estetica/public/reserva',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                  week: date.getWeek(),
+                },
+                success: function(response, status, jqXHR) {
+                    console.log(response);
+                    var events = response.data;
+                    callback(events);
+                    $(".full-height").hide();
+                },
+                error: function(response, status, errorThrown) {
+                    if (response.status == 403) {
+                        alert(response.responseJSON.error);
+                    }
+                    $(".full-height").hide();
+
+                }
+            });
+        }
     });
     $('.fc-prev-button').click(function() {
         actualizarCal(today);

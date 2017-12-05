@@ -53,11 +53,19 @@ Route::get('/tratamientos', [
     'as' => 'tratamiento.list'
 ]);
 Route::resource('/reserva', 'ReservaController');
-Route::get('/reserva/{id}/delete', [
-    'uses' => 'ReservaController@destroy',
-    'as' => 'reserva.destroy'
+Route::post('/reserva/editar/{id}', [
+    'uses' => 'ReservaController@editar',
+    'as' => 'reserva.editar'
 ]);
-Route::get('/reservas', [
-    'uses' => 'ReservaController@anyData',
-    'as' => 'reserva.list'
+Route::post('/reserva/cancelar/{id}', [
+    'uses' => 'ReservaController@cancelar',
+    'as' => 'reserva.cancelar'
 ]);
+// Route::get('/reserva/{id}/delete', [
+//     'uses' => 'ReservaController@destroy',
+//     'as' => 'reserva.destroy'
+// ]);
+// Route::get('/reservas', [
+//     'uses' => 'ReservaController@anyData',
+//     'as' => 'reserva.list'
+// ]);
