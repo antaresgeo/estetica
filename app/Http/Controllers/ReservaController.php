@@ -23,11 +23,14 @@ class ReservaController extends Controller
         $reservas = Reserva::orderBy('id', 'ASC')->paginate(10);
         foreach ($reservas as $reserva) {
             $ct = ClienteTratamiento::find($reserva->cliente_tratamiento_id);
-            $reserva->sucursal;
-            $reserva->user;
-            $reserva->ct = $ct;
-            $reserva->cliente = Cliente::find($ct->cliente_id);
-            $reserva->tratamiento = Tratamiento::find($ct->tratamiento_id);
+            $c = Cliente::find($ct->cliente_id);
+            $t = Tratamiento::find($ct->tratamiento_id);
+            $reserva->cliente_id = $ct->cliente_id;
+            $reserva->tratamiento_id = $ct->tratamiento_id;
+            $reserva->title = ''.$c->nombre.'-'.$t->nombre;
+            // $reserva->sucursal;
+            // $reserva->user;
+            // $reserva->ct = $ct;
 
         }
         return $reservas;
