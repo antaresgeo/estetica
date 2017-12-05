@@ -15,13 +15,13 @@ class AddReservaTable extends Migration
     {
         Schema::create('reserva', function (Blueprint $table) {
             $table->increments('id');
-            $table->dateTime('hora');
+            $table->dateTime('start');
+            $table->dateTime('end');
             $table->integer('cliente_tratamiento_id')->unsigned();
             $table->integer('sucursal_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->enum('estado', ['pendiente', 'realizada', 'cancelada'])->default('pendiente');
             $table->timestamps();
-
             $table->foreign('cliente_tratamiento_id')->references('id')->on('cliente_tratamiento');
             $table->foreign('sucursal_id')->references('id')->on('sucursal');
             $table->foreign('user_id')->references('id')->on('users');

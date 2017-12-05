@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Reserva;
 use App\Sucursal;
 use App\User;
+use App\ClienteTratamiento;
+use App\Cliente;
+use App\Tratamiento;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -18,7 +21,17 @@ class ReservaController extends Controller
     public function index()
     {
         $reservas = Reserva::orderBy('id', 'ASC')->paginate(10);
-        return view('reserva.list')->with('reservas', $reservas);
+        foreach ($reservas as $reserva) {
+            $ct = ClienteTratamiento::find($reserva->cliente_tratamiento_id);
+            $reserva->sucursal;
+            $reserva->user;
+            $reserva->ct = $ct;
+            $reserva->cliente = Cliente::find($ct->cliente_id);
+            $reserva->tratamiento = Tratamiento::find($ct->tratamiento_id);
+
+        }
+        return $reservas;
+        // view('reserva.list')->with('reservas', $reservas);
     }
 
     /**
