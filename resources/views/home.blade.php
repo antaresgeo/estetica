@@ -23,16 +23,12 @@
     </div>
 </div>
 @endsection
-
+@push('css')
+<link rel="stylesheet" href="{{ asset('fullcalendar/fullcalendar.min.css') }}">
+@endpush
 @push('scripts')
-<script>
-$(document).ready(function() {
-    $('#calendar').fullCalendar({
-        header: {
-			left: 'promptResource today prev,next',
-			center: 'title',
-			right: 'timelineDay,timelineThreeDays,agendaWeek,month'
-	}})
-});
-</script>
+<script type="text/javascript" src="{{ asset('fullcalendar/moment.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('fullcalendar/fullcalendar.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('fullcalendar/locale-all.js') }}"></script>
+<script type="text/javascript" src="{{ asset('fullcalendar/calendario.js') }}"></script>
 @endpush

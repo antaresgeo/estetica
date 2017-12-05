@@ -18,9 +18,7 @@
     <link href="{{ asset('css/sb-admin.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.7.0/fullcalendar.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.7.0/fullcalendar.print.css">
-
+    @stack('css')
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -106,8 +104,6 @@
         <script src="{{ asset('js/sb-admin.min.js') }}"></script>
         <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.7.0/fullcalendar.min.js"></script>
         @stack('scripts')
     </div>
 </body>
