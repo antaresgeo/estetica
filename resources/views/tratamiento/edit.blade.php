@@ -23,18 +23,19 @@
 {!! Form::open(['route' => ['tratamiento.update', $tratamiento], 'method' => 'PUT']) !!}
 <div class="form-group">
     {!! Form::label('nombre', 'Nombre') !!}
-    {!! Form::text('nombre', $tratamiento->nombre, ['class' => 'form-control', 'require', 'placeholder' => 'Nombre']) !!}
+    {!! Form::text('nombre', $tratamiento->nombre, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('cantidad', 'Cantidad de sesiones') !!}
-    {!! Form::number('cantidad', $tratamiento->cantidad, ['class' => 'form-control', 'require', 'placeholder' => 'Cantidad de sesiones']) !!}
+    {!! Form::number('cantidad', $tratamiento->cantidad, ['class' => 'form-control', 'required', 'placeholder' => 'Cantidad de sesiones', 'min' => 0]) !!}
 </div>
 <div class="form-group">
     {!! Form::label('precio', 'Precio') !!}
-    {!! Form::number('precio', $tratamiento->precio, ['class' => 'form-control', 'require', 'placeholder' => 'Precio']) !!}
+    {!! Form::number('precio', $tratamiento->precio, ['class' => 'form-control', 'required', 'placeholder' => 'Precio', 'min'=> 0]) !!}
 </div>
 <div class="form-group">
     {!! Form::submit('Editar', ['class' => 'btn btn-primary']) !!}
+    <a href="{{ route('tratamiento.index') }}" class="btn btn-primary">Cancelar</a>
 </div>
 {!! Form::close() !!}
 @endsection

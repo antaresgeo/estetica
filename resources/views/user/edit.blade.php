@@ -23,11 +23,11 @@
 {!! Form::open(['route' => ['user.update', $user], 'method' => 'PUT']) !!}
 <div class="form-group">
     {!! Form::label('name', 'Nombre') !!}
-    {!! Form::text('name', $user->name, ['class' => 'form-control', 'require', 'placeholder' => 'Nombre']) !!}
+    {!! Form::text('name', $user->name, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre']) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('email', 'Correo electrinico') !!}
-    {!! Form::email('email', $user->email, ['class' => 'form-control', 'require', 'placeholder' => 'ejemplo@gmail.com']) !!}
+    {!! Form::label('email', 'Correo electrónico') !!}
+    {!! Form::email('email', $user->email, ['class' => 'form-control', 'required', 'placeholder' => 'ejemplo@gmail.com']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('type', 'Tipo de Usuario') !!}
@@ -35,6 +35,7 @@
 </div>
 <div class="form-group">
     {!! Form::submit('Editar', ['class' => 'btn btn-primary']) !!}
+    <a href="{{ route('user.index') }}" class="btn btn-primary">Cancelar</a>
 </div>
 {!! Form::close() !!}
 @endsection

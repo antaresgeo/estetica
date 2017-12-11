@@ -21,10 +21,11 @@
 {!! Form::open(['route' => 'sucursal.store', 'method' => 'POST']) !!}
 <div class="form-group">
     {!! Form::label('nombre', 'Nombre') !!}
-    {!! Form::text('nombre', null, ['class' => 'form-control', 'require', 'placeholder' => 'Nombre']) !!}
+    {!! Form::text('nombre', null, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre']) !!}
 </div>
 <div class="form-group">
     {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
+    <a href="{{ route('sucursal.index') }}" class="btn btn-primary">Cancelar</a>
 </div>
 {!! Form::close() !!}
 @endsection

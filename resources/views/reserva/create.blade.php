@@ -21,7 +21,8 @@
 {!! Form::open(['route' => 'reserva.store', 'method' => 'POST']) !!}
 <div class="form-group">
     {!! Form::label('hora', 'Hora') !!}
-    {!! Form::date('hora', null, ['class' => 'form-control', 'require', 'placeholder' => 'Nombre']) !!}
+    <input type="hidden" name="cliente_tratamiento_id" value="">
+    {!! Form::date('hora', null, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('sucursal_id', 'Sucursal') !!}

@@ -43,6 +43,27 @@ Route::get('/clientes', [
     'uses' => 'ClienteController@anyData',
     'as' => 'cliente.list'
 ]);
+Route::get('/cliente/buscar/sh', [
+    'uses' => 'ClienteController@buscar',
+    'as' => 'cliente.buscar'
+]);
+Route::get('/cliente/{id}/tratamiento', [
+    'uses' => 'ClienteController@tratamientos',
+    'as' => 'cliente.tratamientos'
+]);
+Route::get('/cliente/tratamiento/add', [
+    'uses' => 'ClienteController@addTratamiento',
+    'as' => 'cliente.tratamiento.add'
+]);
+Route::get('/cliente/{id}/saldo', [
+    'uses' => 'ClienteController@saldo',
+    'as' => 'cliente.saldo'
+]);
+Route::get('/ct/{id}/abonar', [
+    'uses' => 'ClienteController@abonar',
+    'as' => 'cliente.abonar'
+]);
+
 Route::resource('/tratamiento', 'TratamientoController');
 Route::get('/tratamiento/{id}/delete', [
     'uses' => 'TratamientoController@destroy',
@@ -57,15 +78,11 @@ Route::post('/reserva/editar/{id}', [
     'uses' => 'ReservaController@editar',
     'as' => 'reserva.editar'
 ]);
-Route::post('/reserva/cancelar/{id}', [
-    'uses' => 'ReservaController@cancelar',
-    'as' => 'reserva.cancelar'
+Route::post('/reserva/estado/{id}', [
+    'uses' => 'ReservaController@estado',
+    'as' => 'reserva.estado'
 ]);
-// Route::get('/reserva/{id}/delete', [
-//     'uses' => 'ReservaController@destroy',
-//     'as' => 'reserva.destroy'
-// ]);
-// Route::get('/reservas', [
-//     'uses' => 'ReservaController@anyData',
-//     'as' => 'reserva.list'
-// ]);
+Route::get('/reserva/{id}/delete', [
+    'uses' => 'ReservaController@destroy',
+    'as' => 'reserva.destroy'
+]);

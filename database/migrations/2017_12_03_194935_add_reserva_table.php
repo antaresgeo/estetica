@@ -22,9 +22,9 @@ class AddReservaTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->enum('estado', ['pendiente', 'realizada', 'cancelada'])->default('pendiente');
             $table->timestamps();
-            $table->foreign('cliente_tratamiento_id')->references('id')->on('cliente_tratamiento');
-            $table->foreign('sucursal_id')->references('id')->on('sucursal');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('cliente_tratamiento_id')->references('id')->on('cliente_tratamiento')->onDelete('cascade');;
+            $table->foreign('sucursal_id')->references('id')->on('sucursal')->onDelete('cascade');;
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');;
         });
     }
 

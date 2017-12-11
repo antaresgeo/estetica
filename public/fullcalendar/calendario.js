@@ -49,41 +49,6 @@ function hideCita(estado) {
     return "inherit";
 }
 
-function formModal(data) {
-    var formTemplete = "";
-    formTemplete = `<div class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">${data.title}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="list-group">
-              <a href="/estetica/public/reserva/${data.id}/edit" class="list-group-item list-group-item-action">Editar reserva</a>
-              <a href="#" onclick="cancelarR(${data.id})" class="list-group-item list-group-item-action">Cancelar reserva</a>
-            </div>
-          </div>
-          <div class="modal-footer">
-
-          </div>
-        </div>
-      </div>
-    </div>`;
-
-    var query = $(".modal");
-    if (query.length === 0) {
-        $("body").append(formTemplete);
-    } else {
-        query.remove();
-        $("body").append(formTemplete);
-    }
-    $(".modal").modal('show');
-}
-
-
 function cancelarR(id) {
     $('.modal').modal('hide');
     if (confirm("¿Está seguro que desea cancelar este calendario?") == true) {
@@ -120,7 +85,15 @@ function calendario() {
         header: {
             left: 'prev,next today',
             center: 'title',
-            right: 'agendaWeek,agendaDay'
+            right: 'agendaWeek,agendaDay,listDay,listWeek'
+        },
+        views: {
+            listDay: {
+                buttonText: 'lista Diaria'
+            },
+            listWeek: {
+                buttonText: 'lista Semanal'
+            },
         },
         locale: 'es',
         navLinks: true, // can click day/week names to navigate views
@@ -133,20 +106,53 @@ function calendario() {
         allDaySlot: false,
         minTime: "08:00:00",
         maxTime: "21:00:00",
-        slotLabelFormat: 'h(:mm)a',
+        slotLabelFormat: 'H:mm',
         slotEventOverlap: false,
         eventLimit: true, // allow "more" link when too many events
         slotDuration: '00:15:00',
         eventClick: function(calEvent, jsEvent, view) {
             console.log(calEvent);
-            formModal(calEvent)
-            //formModal(calEvent, this);
-            // change the border color just for fun
-            //$(this).css('border-color', 'red');
-
+            $('#cinfo').empty();
+            $('#cinfo').html(`
+                <h6>Cliente</h6>
+                <span><b>Nombre:</b> ${calEvent.cliente.nombre}</span><br>
+                <span><b>Correo electrónico:</b> ${calEvent.cliente.email}</span><br>
+                <span><b>Telefono:</b> ${calEvent.cliente.telefono}</span><br>
+                <span><b>DNI:</b> ${calEvent.cliente.identificacion}</span><br>
+                <span><b>Localidad:</b> ${calEvent.cliente.localidad}</span><br>
+                <span><b>Ocupación:</b> ${calEvent.cliente.ocupacion}</span><br>`);
+            $('#mer').modal('show');
+            $('#mer').on('hidden.bs.modal', function (e) {
+                $('#fer').attr('action', $('#fer').attr('action').replace(calEvent.id, ':id'))
+            });
+            $('#datetimepicker5').datetimepicker({
+                format:'YYYY-MM-DD HH:mm',
+                date: new Date(calEvent.start._i),
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            });
+            $('#datetimepicker6').datetimepicker({
+                format:'YYYY-MM-DD HH:mm',
+                date: new Date(calEvent.end._i),
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            });
+            $
+            $('#fer').attr('action', $('#fer').attr('action').replace(':id', calEvent.id));
+            $('#fer').find('#sucursal_id').val(calEvent.sucursal_id);
+            $('#fer').find('#user_id').val(calEvent.user_id);
+            $('#fer').find('#estado').val(calEvent.estado);
+            $('#fer').find('#cliente_tratamiento_id').val(calEvent.cliente_tratamiento_id);
         },
          eventDrop: function(event, delta, revertFunc) {
-           console.log(event);
             if (!confirm("Esta seguro que quiere realizar este cambio?")) {
                 revertFunc();
             }else {
@@ -173,7 +179,7 @@ function calendario() {
 
             alert(event.title + " end is now " + event.end.format());
 
-            if (!confirm("is this okay?")) {
+            if (!confirm("quiere hacer esto?")) {
                 revertFunc();
             }else {
                 $.ajax({
@@ -203,11 +209,14 @@ function calendario() {
                 type: 'GET',
                 dataType: 'json',
                 data: {
-                  week: date.getWeek(),
+                  start: start.toISOString().split('T')[0],
+                  end: end.toISOString().split('T')[0],
+                  // week: date.getWeek(),
+                  sucursal: $('#sucursal-filter').val(),
+                  estado: $('#estado-filter').val()
                 },
                 success: function(response, status, jqXHR) {
-                    console.log(response);
-                    var events = response.data;
+                    var events = response;
                     callback(events);
                     $(".full-height").hide();
                 },
@@ -228,4 +237,118 @@ function calendario() {
     $('.fc-next-button').click(function() {
         actualizarCal(today);
     });
+
+    $('#acc').click(function() {
+        $("#mcc").modal('show');
+    });
+
+    $('#aat').click(function() {
+        $('#datatable-clientes').DataTable().ajax.reload();
+        $("#mat").modal('show');
+    });
+
+    $('#acr').click(function() {
+        $("#mcr").modal('show');
+    });
+
+    $('#aab').click(function() {
+        $("#mab").modal('show');
+    });
+
+    $('#sucursal-filter').change(function() {
+        $("#calendar").fullCalendar('refetchEvents');
+    })
+    $('#estado-filter').change(function() {
+        $("#calendar").fullCalendar('refetchEvents');
+    })
+}
+
+function afcc(){
+    if($("#fcc")[0].checkValidity()) {
+        $('#fcc').ajaxSubmit({
+            success: function () {
+                $("#mcc").modal('hide');
+                $("#fcc")[0].reset();
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }else {
+        alert('Los campos no son validos')
+    }
+}
+
+function afcr(){
+    if($("#fcr")[0].checkValidity()) {
+        $('#fcr').ajaxSubmit({
+            success: function () {
+                $("#mcr").modal('hide');
+                $('#fcr')[0].reset();
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }else {
+        alert('Los campos no son validos')
+    }
+}
+
+function afer(){
+    if($("#fer")[0].checkValidity()) {
+        $('#fer').ajaxSubmit({
+            success: function () {
+                $("#mer").modal('hide');
+                $("#fer")[0].reset();
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }else {
+        alert('Los campos no son validos')
+    }
+}
+function afab(){
+    if($("#fab")[0].checkValidity()) {
+        $('#fab').ajaxSubmit({
+            success: function () {
+                $("#mab").modal('hide');
+                $("#fab")[0].reset();
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function (e) {
+                alert(e.responseText);
+                $("#mab").modal('hide');
+            }
+        });
+    }else {
+        alert('Los campos no son validos')
+    }
+
+}
+
+function asignar(cliente_id, name){
+    var tratamiento_id = $('#tratamiento-filter-'+cliente_id).val();
+    if(tratamiento_id != ''){
+        if(confirm('Esta seguro de asignar el tratamiento '+$('#tratamiento-filter-'+cliente_id+' option:selected').text()+' al cliente '+name)){
+            $.ajax({
+                url: '/estetica/public/cliente/tratamiento/add',
+                type: 'GET',
+                data: {
+                    c: cliente_id,
+                    t: tratamiento_id
+                },
+                success: function(response, status, jqXHR) {
+                    $("#mat").modal('hide');
+                },
+                error: function(response, status, errorThrown) {
+                    console.log(response);
+                }
+            });
+        }
+    }
 }

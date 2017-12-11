@@ -17,14 +17,14 @@ class AddClienteTratamientoTable extends Migration
             $table->increments('id');
             $table->integer('cliente_id')->unsigned();
             $table->integer('tratamiento_id')->unsigned();
-            $table->integer('cantidad')->nullable($value = true);
+            $table->integer('catidad')->nullable($value = true);
             $table->float('precio')->nullable($value = true);
             $table->float('abonado')->nullable($value = true);
             $table->float('saldo')->nullable($value = true);
             $table->timestamps();
 
-            $table->foreign('cliente_id')->references('id')->on('cliente');
-            $table->foreign('tratamiento_id')->references('id')->on('tratamiento');
+            $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('cascade');;
+            $table->foreign('tratamiento_id')->references('id')->on('tratamiento')->onDelete('cascade');;
         });
     }
 

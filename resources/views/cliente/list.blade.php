@@ -27,6 +27,10 @@
     <th>Nombre</th>
     <th>Telefono</th>
     <th>DNI</th>
+    <th>Correo electrónico</th>
+    <th>Localidad</th>
+    <th>Fecha de nacimiento</th>
+    <th>Ocupación</th>
     <th>Acción</th>
 </tr>
 @endsection
@@ -45,6 +49,10 @@ $(function() {
             { data: 'nombre', name: 'nombre' },
             { data: 'telefono', name: 'telefono' },
             { data: 'identificacion', name: 'identificacion' },
+            { data: 'email', name: 'email'},
+            { data: 'localidad', name: 'localidad'},
+            { data: 'fecha_nacimiento', name: 'fecha_nacimiento'},
+            { data: 'ocupacion', name: 'ocupacion'},
             { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
                 var edit = '{{ route('cliente.edit', ':id')}}'.replace(':id', data);
                 var destroy = '{{ route('cliente.destroy', ':id') }}'.replace(':id', data);

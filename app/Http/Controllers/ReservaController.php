@@ -10,9 +10,18 @@ use App\Cliente;
 use App\Tratamiento;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
-
+use \DateTime;
 class ReservaController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -21,21 +30,24 @@ class ReservaController extends Controller
     public function index(Request $request)
     {
         //dd($request->all());
-        $reservas = Reserva::orderBy('id', 'ASC')->paginate(10);
+        $reservas = Reserva::orderBy('id', 'ASC')
+            ->whereBetween('start', [new DateTime($request->start), new DateTime($request->end)])
+            ->where('estado', $request->estado)
+            ->where('sucursal_id', $request->sucursal)
+            ->get();
+
         foreach ($reservas as $reserva) {
             $ct = ClienteTratamiento::find($reserva->cliente_tratamiento_id);
             $c = Cliente::find($ct->cliente_id);
             $t = Tratamiento::find($ct->tratamiento_id);
             $reserva->cliente_id = $ct->cliente_id;
+            $reserva->cliente = $c;
             $reserva->tratamiento_id = $ct->tratamiento_id;
-            $reserva->title = ''.$c->nombre.'-'.$t->nombre;
-            // $reserva->sucursal;
-            // $reserva->user;
-            // $reserva->ct = $ct;
-
+            $reserva->title = ''.$t->nombre.'
+            '.$c->nombre.' - '.$c->telefono.'
+            Pago:'.$ct->abonado.' Impago:'.$ct->saldo.' Total:'.$ct->precio;
         }
         return $reservas;
-        // // view('reserva.list')->with('reservas', $reservas);
     }
 
     /**
@@ -56,7 +68,7 @@ class ReservaController extends Controller
         }
         return view('reserva.create')
             ->with('sucursales', $sucursales)
-            ->with('profecionales', $profecionales);;
+            ->with('profecionales', $profecionales);
     }
 
     /**
@@ -68,9 +80,12 @@ class ReservaController extends Controller
     public function store(Request $request)
     {
         $reserva = new Reserva($request->all());
-        // $reserva->save();
+        $reserva->start = new DateTime($request->start);
+        $reserva->end = new DateTime($request->end);
+        $reserva->cliente_tratamiento_id = $request->cliente_tratamiento_id;
+        $reserva->save();
         // flash('Tratamiento '. $trartamiento->nombre .' guardada con exito.')->success();
-        return redirect()->route('reserva.index');
+        // return redirect()->route('reserva.index');
     }
 
     /**
@@ -102,14 +117,16 @@ class ReservaController extends Controller
      * @param  \App\Reserva  $reserva
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Reserva $reserva)
+    public function update(Request $request, $id)
     {
-        // $reserva->nombre = $request->nombre;
-        // $reserva->cantidad = $request->cantidad;
-        // $reserva->precio = $request->precio;
+        $reserva = Reserva::find($id);
+        $reserva->start = $request->start;
+        $reserva->end = $request->end;
+        $reserva->sucursal_id = $request->sucursal_id;
+        $reserva->user_id = $request->user_id;
+        $reserva->estado = $request->estado;
+        $reserva->cliente_tratamiento_id = $request->cliente_tratamiento_id;
         $reserva->save();
-        // flash('Tratamiento '. $reserva->nombre .' guardada con exito.')->success();
-        return redirect()->route('reserva.index');
     }
 
     /**
@@ -118,25 +135,23 @@ class ReservaController extends Controller
      * @param  \App\Reserva  $reserva
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Reserva $reserva)
+    public function destroy($id)
     {
-        $reserva->delete();
-        // flash('Tratamiento '. $tratamiento->nombre .' borrado con exito.')->success();
-        return redirect()->route('reserva.index');
+        Reserva::find($id)->delete();
     }
 
-    public function anyData()
+    public function editar(Request $rq, $rs)
     {
-        return Datatables::of(Reserva::query())->make(true);
+        $rs = Reserva::find($rs);
+        $rs->start = $rq->start;
+        $rs->end = $rq->end;
+        $rs->save();
     }
 
-    public function editar(Request $rq, Reserva $rs)
+    public function estado(Request $rq, Reserva $rs)
     {
-      dd($rq->all());
-    }
-
-    public function cancelar(Request $rq, Reserva $rs)
-    {
-      dd($rq->all());
+        $rs = Reserva::find($rs);
+        $rs->estado = $rq->estado;
+        $rs->save();
     }
 }

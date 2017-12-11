@@ -3,11 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\Tratamiento;
+use App\ClienteTratamiento;
+use \DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Yajra\Datatables\Datatables;
 
 class ClienteController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -38,9 +51,12 @@ class ClienteController extends Controller
     public function store(Request $request)
     {
         $cliente = new Cliente($request->all());
+        $cliente->fecha_nacimiento = new DateTime($request->fecha_nacimiento);
         $cliente->save();
         flash('Cliente '. $cliente->nombre .' guardado con exito.')->success();
-        return redirect()->route('cliente.index');
+        if(!$request->noreload){
+            return redirect()->route('cliente.index');
+        }
     }
 
     /**
@@ -77,6 +93,10 @@ class ClienteController extends Controller
         $cliente->nombre = $request->nombre;
         $cliente->telefono = $request->telefono;
         $cliente->identificacion = $request->identificacion;
+        $cliente->email = $request->email;
+        $cliente->localidad = $request->localidad;
+        $cliente->fecha_nacimiento = new DateTime($request->fecha_nacimiento);
+        $cliente->ocupacion = $request->ocupacion;
         $cliente->save();
         flash('Cliente '. $cliente->nombre .' guardado con exito.')->success();
         return redirect()->route('cliente.index');
@@ -88,15 +108,67 @@ class ClienteController extends Controller
      * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cliente $cliente)
+    public function destroy($id)
     {
-        $cliente->forceDelete();
-        flash('Cliente '. $cliente->nombre .' borrado con exito.')->success();
+        Cliente::find($id)->delete();
+        flash('Cliente  borrado con exito.')->success();
         return redirect()->route('cliente.index');
     }
 
     public function anyData()
     {
         return Datatables::of(Cliente::query())->make(true);
+    }
+
+    public function addTratamiento(Request $r)
+    {
+        $t = Tratamiento::find($r->t);
+        $t->clientes()->attach($r->c, [
+            'catidad' => $t->cantidad,
+            'precio' => $t->precio,
+            'abonado' => 0,
+            'saldo' => $t->precio
+        ]);
+        flash('Tratamiento asignado')->success();
+    }
+
+    public function buscar(Request $r)
+    {
+        return Cliente::where('nombre','LIKE',"%{$r->sh}%")->get();
+    }
+
+    public function tratamientos($id)
+    {
+        $c = Cliente::find($id);
+        return $c->tratamientos;
+    }
+
+    public function saldo($id)
+    {
+        $saldo = 0;
+        $abonado = 0;
+        $precio = 0;
+        $t = Cliente::find($id)->tratamientos;
+        foreach ($t as $tt) {
+            $ct = ClienteTratamiento::find($tt->pivot->id);
+            $saldo = $saldo + $ct->saldo;
+            $abonado = $abonado + $ct->abonado;
+            $precio = $precio + $ct->precio;
+        }
+        return [ 'saldo' => $saldo, 'abonado' => $abonado, 'precio' => $precio ];
+    }
+
+    public function abonar(Request $r, $id)
+    {
+        $ct = ClienteTratamiento::find($id);
+        if($ct->saldo === 0){
+            return response('El valor del tratamiento ya ha sido cancelado.', 400);
+        }
+        if($ct->abonado < $ct->saldo){
+            $ct->abonado = $ct->abonado + $r->valor;
+            $ct->saldo = $ct->saldo - $r->valor;
+        }
+
+        $ct->save();
     }
 }

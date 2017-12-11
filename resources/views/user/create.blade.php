@@ -21,15 +21,15 @@
 {!! Form::open(['route' => 'user.store', 'method' => 'POST']) !!}
 <div class="form-group">
     {!! Form::label('name', 'Nombre') !!}
-    {!! Form::text('name', null, ['class' => 'form-control', 'require', 'placeholder' => 'Nombre']) !!}
+    {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre']) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('email', 'Correo electrinico') !!}
-    {!! Form::email('email', null, ['class' => 'form-control', 'require', 'placeholder' => 'ejemplo@gmail.com']) !!}
+    {!! Form::label('email', 'Correo electrónico') !!}
+    {!! Form::email('email', null, ['class' => 'form-control', 'required', 'placeholder' => 'ejemplo@gmail.com']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('password', 'Contraseña') !!}
-    {!! Form::password('password', ['class' => 'form-control', 'require' , 'placeholder' => '****']) !!}
+    {!! Form::password('password', ['class' => 'form-control', 'required' , 'placeholder' => '****']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('type', 'Tipo de Usuario') !!}
@@ -37,6 +37,7 @@
 </div>
 <div class="form-group">
     {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
+    <a href="{{ route('user.index') }}" class="btn btn-primary">Cancelar</a>
 </div>
 {!! Form::close() !!}
 @endsection

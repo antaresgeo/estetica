@@ -9,6 +9,15 @@ use Yajra\Datatables\Datatables;
 class TratamientoController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -88,10 +97,10 @@ class TratamientoController extends Controller
      * @param  \App\Tratamiento  $tratamiento
      * @return \Illuminate\Http\Response
      */
-     public function destroy(Tratamiento $tratamiento)
+     public function destroy($id)
      {
-         $tratamiento->delete();
-         flash('Tratamiento '. $tratamiento->nombre .' borrado con exito.')->success();
+         Tratamiento::find($id)->delete();
+         flash('Tratamiento borrado con exito.')->success();
          return redirect()->route('tratamiento.index');
      }
 

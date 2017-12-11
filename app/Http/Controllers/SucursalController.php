@@ -9,6 +9,15 @@ use Yajra\Datatables\Datatables;
 class SucursalController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -86,10 +95,10 @@ class SucursalController extends Controller
      * @param  \App\Sucursal  $sucursal
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sucursal $sucursal)
-    {
-        $sucursal->delete();
-        flash('Sucursal '. $sucursal->nombre .' borrada con exito.')->success();
+     public function destroy($id)
+     {
+        Sucursal::find($id)->delete();
+        flash('Sucursal borrada con exito.')->success();
         return redirect()->route('sucursal.index');
     }
 

@@ -23,15 +23,15 @@
 {!! Form::open(['route' => ['reserva.update', null], 'method' => 'PUT']) !!}
 <div class="form-group">
     {!! Form::label('nombre', 'Nombre') !!}
-    {!! Form::text('nombre', null, ['class' => 'form-control', 'require', 'placeholder' => 'Nombre']) !!}
+    {!! Form::text('nombre', null, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('cantidad', 'Cantidad de sesiones') !!}
-    {!! Form::number('cantidad', null, ['class' => 'form-control', 'require', 'placeholder' => 'Cantidad de sesiones']) !!}
+    {!! Form::number('cantidad', null, ['class' => 'form-control', 'required', 'placeholder' => 'Cantidad de sesiones']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('precio', 'Precio') !!}
-    {!! Form::number('precio', null, ['class' => 'form-control', 'require', 'placeholder' => 'Precio']) !!}
+    {!! Form::number('precio', null, ['class' => 'form-control', 'required', 'placeholder' => 'Precio', 'min' => 0]) !!}
 </div>
 <div class="form-group">
     {!! Form::submit('Editar', ['class' => 'btn btn-primary']) !!}

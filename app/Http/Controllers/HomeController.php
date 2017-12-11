@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Cliente;
 use App\Reserva;
-use App\ClienteTratamiento;
+use App\Tratamiento;
+use App\Sucursal;
+use App\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -26,29 +28,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // $c = Cliente::find(1);
-
-        // $r = new Reserva();
-        // $r->sucursal_id = 1;
-        // $r->user_id = 1;
-        // $r->cliente_tratamiento_id = 4;
-        // $r->hora = date("Y-m-d H:i:s");
-        // $r->save();
-
-        // $r = Reserva::find(1);
-        // ClienteTratamiento::find($r->cliente_tratamiento_id)
-        // dd($c->tratamientos);
-        // $c->tratamientos()->attach(1, ['catidad'=> 5, 'precio' => 500, 'abonado' => 0, 'saldo' => 500]);
-
-        // foreach ($c->tratamientos as $tratamiento) {
-        //     echo $tratamiento->pivot->id;
-        //     echo $tratamiento->nombre;
-        //     echo $tratamiento->pivot->created_at;
-        //     echo '<br/>';
-        // }
-
-        // $pivot_id = $c->tratamientos()->where('tratamiento.id', '=', 1)->withPivot("id")->orderBy('pivot_created_at', 'desc')->first()->pivot->id;
-        // echo $pivot_id;
-        return view('home');
+        $tratamientos = [];
+        foreach (Tratamiento::all() as $tratamiento) {
+            $tratamientos[$tratamiento->id] = $tratamiento->nombre;
+        }
+        $sucursales = [];
+        foreach (Sucursal::all() as $sucursal) {
+            $sucursales[$sucursal->id] = $sucursal->nombre;
+        }
+        $profesionales = [];
+        foreach (User::all() as $user) {
+            $profesionales[$user->id] = $user->name;
+        }
+        return view('home')
+            ->with('sucursales', $sucursales)
+            ->with('tratamientos', $tratamientos)
+            ->with('profesionales', $profesionales);
     }
 }

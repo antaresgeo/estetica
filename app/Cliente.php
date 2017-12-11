@@ -8,13 +8,20 @@ class Cliente extends Model {
 
     protected  $table = "cliente";
 
-    protected $fillable = [ 'nombre', 'telefono', 'identificacion' ];
+    protected $fillable = [
+        'id',
+        'nombre',
+        'telefono',
+        'identificacion',
+        'email',
+        'localidad',
+        'fecha_nacimiento',
+        'ocupacion'
+    ];
 
     public function tratamientos(){
         return $this->belongsToMany('App\Tratamiento')
             ->withPivot('id','catidad', 'precio', 'abonado', 'saldo')
             ->withTimestamps();
-            // ->using('App\ClienteTratamiento');
     }
-
 }

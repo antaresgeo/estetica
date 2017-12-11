@@ -9,6 +9,15 @@ use Yajra\Datatables\Datatables;
 class UserController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -89,10 +98,10 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
-    {
-        $user->delete();
-        flash('Usuario '. $user->name .' borrado con exito.')->success();
+     public function destroy($id)
+     {
+        User::find($id)->delete();
+        flash('Usuario borrado con exito.')->success();
         return redirect()->route('user.index');
     }
 
