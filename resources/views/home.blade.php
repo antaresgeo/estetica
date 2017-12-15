@@ -84,10 +84,10 @@
                 {!! Form::label('email', 'Correo electrinico') !!}
                 {!! Form::email('email', null, ['class' => 'form-control', 'required', 'placeholder' => 'ejemplo@gmail.com']) !!}
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 {!! Form::label('localidad', 'Localidad') !!}
                 {!! Form::text('localidad', null,['class' => 'form-control', 'required' , 'placeholder' => 'localidad']) !!}
-            </div>
+            </div> --}}
             <div class="form-group">
                 {!! Form::label('facha_nacimiento', 'Fecha de nacimiento') !!}
                 <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
@@ -97,10 +97,10 @@
                     {!! Form::text('facha_nacimiento', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker1']) !!}
                 </div>
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 {!! Form::label('ocupacion', 'Ocupación') !!}
                 {!! Form::text('ocupacion', null,['class' => 'form-control', 'required' , 'placeholder' => 'ocupación']) !!}
-            </div>
+            </div> --}}
         {!! Form::close() !!}
       </div>
       <div class="modal-footer">
@@ -195,7 +195,7 @@
                   {!! Form::select('sucursal_id', $sucursales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
               </div>
               <div class="form-group">
-                  {!! Form::label('user_id', 'Profesional') !!}
+                  {!! Form::label('user_id', 'Vendedor') !!}
                   {!! Form::select('user_id', $profesionales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
               </div>
               <div id="extra"></div>
@@ -316,6 +316,7 @@
     .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
     .autocomplete-group { padding: 2px 5px; }
     .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+    .fc-time-grid-event .fc-time, .fc-time-grid-event .fc-title{color: white; font-weight: 600;}
 </style>
 @endpush
 @push('scripts')

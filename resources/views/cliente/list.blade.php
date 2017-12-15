@@ -50,9 +50,9 @@ $(function() {
             { data: 'telefono', name: 'telefono' },
             { data: 'identificacion', name: 'identificacion' },
             { data: 'email', name: 'email'},
-            { data: 'localidad', name: 'localidad'},
+            // { data: 'localidad', name: 'localidad'},
             { data: 'fecha_nacimiento', name: 'fecha_nacimiento'},
-            { data: 'ocupacion', name: 'ocupacion'},
+            // { data: 'ocupacion', name: 'ocupacion'},
             { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
                 var edit = '{{ route('cliente.edit', ':id')}}'.replace(':id', data);
                 var destroy = '{{ route('cliente.destroy', ':id') }}'.replace(':id', data);

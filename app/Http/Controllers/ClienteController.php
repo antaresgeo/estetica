@@ -94,9 +94,9 @@ class ClienteController extends Controller
         $cliente->telefono = $request->telefono;
         $cliente->identificacion = $request->identificacion;
         $cliente->email = $request->email;
-        $cliente->localidad = $request->localidad;
+        // $cliente->localidad = $request->localidad;
         $cliente->fecha_nacimiento = new DateTime($request->fecha_nacimiento);
-        $cliente->ocupacion = $request->ocupacion;
+        // $cliente->ocupacion = $request->ocupacion;
         $cliente->save();
         flash('Cliente '. $cliente->nombre .' guardado con exito.')->success();
         return redirect()->route('cliente.index');

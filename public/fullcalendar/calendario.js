@@ -111,7 +111,6 @@ function calendario() {
         eventLimit: true, // allow "more" link when too many events
         slotDuration: '00:15:00',
         eventClick: function(calEvent, jsEvent, view) {
-            console.log(calEvent);
             $('#cinfo').empty();
             $('#cinfo').html(`
                 <h6>Cliente</h6>
@@ -123,11 +122,11 @@ function calendario() {
                 <span><b>Ocupación:</b> ${calEvent.cliente.ocupacion}</span><br>`);
             $('#mer').modal('show');
             $('#mer').on('hidden.bs.modal', function (e) {
+                $('#fer')[0].reset();
                 $('#fer').attr('action', $('#fer').attr('action').replace(calEvent.id, ':id'))
             });
             $('#datetimepicker5').datetimepicker({
                 format:'YYYY-MM-DD HH:mm',
-                date: new Date(calEvent.start._i),
                 icons: {
                     time: "fa fa-clock-o",
                     date: "fa fa-calendar",
@@ -137,7 +136,6 @@ function calendario() {
             });
             $('#datetimepicker6').datetimepicker({
                 format:'YYYY-MM-DD HH:mm',
-                date: new Date(calEvent.end._i),
                 icons: {
                     time: "fa fa-clock-o",
                     date: "fa fa-calendar",
@@ -145,8 +143,9 @@ function calendario() {
                     down: "fa fa-arrow-down"
                 }
             });
-            $
             $('#fer').attr('action', $('#fer').attr('action').replace(':id', calEvent.id));
+            $('#fer').find('#start').val(calEvent.start._i);
+            $('#fer').find('#end').val(calEvent.end._i);
             $('#fer').find('#sucursal_id').val(calEvent.sucursal_id);
             $('#fer').find('#user_id').val(calEvent.user_id);
             $('#fer').find('#estado').val(calEvent.estado);
@@ -211,12 +210,23 @@ function calendario() {
                 data: {
                   start: start.toISOString().split('T')[0],
                   end: end.toISOString().split('T')[0],
-                  // week: date.getWeek(),
                   sucursal: $('#sucursal-filter').val(),
                   estado: $('#estado-filter').val()
                 },
                 success: function(response, status, jqXHR) {
                     var events = response;
+                    console.log(events);
+                    for (var even of events) {
+                        console.log(even.estado);
+                        if(even.estado === 'realizada'){
+                            even.color = '#00796B';
+                        }
+                        if(even.estado === 'cancelada'){
+                            console.log('can');
+                            even.color = '#455A64';
+                        }
+                    }
+
                     callback(events);
                     $(".full-height").hide();
                 },
@@ -281,16 +291,23 @@ function afcc(){
 
 function afcr(){
     if($("#fcr")[0].checkValidity()) {
-        $('#fcr').ajaxSubmit({
-            success: function () {
-                $("#mcr").modal('hide');
-                $('#fcr')[0].reset();
-                $("#calendar").fullCalendar('refetchEvents');
-            },
-            error: function () {
-                console.log('error');
-            }
-        });
+        var start = new Date($('#fcr input[name=start]').val());
+        var end = new Date($('#fcr input[name=end]').val());
+        if(start < end){
+            $('#fcr').ajaxSubmit({
+                success: function () {
+                    $("#mcr").modal('hide');
+                    $('#fcr')[0].reset();
+                    $("#calendar").fullCalendar('refetchEvents');
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }else{
+            alert('Por favor ingrese horas validas')
+        }
+
     }else {
         alert('Los campos no son validos')
     }
@@ -298,16 +315,22 @@ function afcr(){
 
 function afer(){
     if($("#fer")[0].checkValidity()) {
-        $('#fer').ajaxSubmit({
-            success: function () {
-                $("#mer").modal('hide');
-                $("#fer")[0].reset();
-                $("#calendar").fullCalendar('refetchEvents');
-            },
-            error: function () {
-                console.log('error');
-            }
-        });
+        var start = new Date($('#fer input[name=start]').val());
+        var end = new Date($('#fer input[name=end]').val());
+        if(start < end){
+            $('#fer').ajaxSubmit({
+                success: function () {
+                    $("#mer").modal('hide');
+                    $("#fer")[0].reset();
+                    $("#calendar").fullCalendar('refetchEvents');
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }else{
+            alert('Por favor ingrese horas validas')
+        }
     }else {
         alert('Los campos no son validos')
     }

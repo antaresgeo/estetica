@@ -37,10 +37,10 @@
     {!! Form::label('email', 'Correo electrónico') !!}
     {!! Form::email('email', $cliente->email, ['class' => 'form-control', 'required', 'placeholder' => 'ejemplo@gmail.com']) !!}
 </div>
-<div class="form-group">
+{{-- <div class="form-group">
     {!! Form::label('localidad', 'Localidad') !!}
     {!! Form::text('localidad', $cliente->localidad,['class' => 'form-control', 'required' , 'placeholder' => 'localidad']) !!}
-</div>
+</div> --}}
 <div class="form-group">
     {!! Form::label('facha_nacimiento', 'Fecha de nacimiento') !!}
     <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
@@ -50,10 +50,10 @@
         {!! Form::text('facha_nacimiento', $cliente->facha_nacimiento,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker1']) !!}
     </div>
 </div>
-<div class="form-group">
+{{-- <div class="form-group">
     {!! Form::label('ocupacion', 'Ocupación') !!}
     {!! Form::text('ocupacion', $cliente->ocupacion,['class' => 'form-control', 'required' , 'placeholder' => 'ocupación']) !!}
-</div>
+</div> --}}
 <div class="form-group">
     {!! Form::submit('Editar', ['class' => 'btn btn-primary']) !!}
     <a href="{{ route('cliente.index') }}" class="btn btn-primary">Cancelar</a>
