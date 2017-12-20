@@ -28,9 +28,9 @@
     <th>Telefono</th>
     <th>DNI</th>
     <th>Correo electrónico</th>
-    <th>Localidad</th>
+    {{-- <th>Localidad</th> --}}
     <th>Fecha de nacimiento</th>
-    <th>Ocupación</th>
+    {{-- <th>Ocupación</th> --}}
     <th>Acción</th>
 </tr>
 @endsection
@@ -42,7 +42,7 @@ $(function() {
         processing: true,
         serverSide: true,
         language: {
-            "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+            "url": "{{ asset('js/Spanish.json') }}"
         },
         ajax: '{!! route('cliente.list') !!}',
         columns: [

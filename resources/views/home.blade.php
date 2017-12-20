@@ -14,7 +14,7 @@
             {!! Form::select(null, $sucursales, null, ['class' => 'form-control', 'id' => 'sucursal-filter']) !!}
         </li>
         <li class="nav-item" style="margin-right: 7px;">
-            {!! Form::select(null, ['pendiente' => 'Pendientes', 'realizada' => 'Realizadas', 'cancelada' => 'Canceladas'] , null, ['class' => 'form-control', 'id' => 'estado-filter']) !!}
+            {!! Form::select(null, ['todas' => 'Todas', 'pendiente' => 'Pendientes', 'realizada' => 'Realizadas', 'cancelada' => 'Canceladas'] , null, ['class' => 'form-control', 'id' => 'estado-filter']) !!}
         </li>
         <li class="nav-item">
             <button id="acc"  type="button" class="btn btn-primary" style="margin-right: 7px">Crear Cliente</button>
@@ -165,13 +165,17 @@
               {!! Form::text('cliente', null,['class' => 'form-control', 'placeholder' => 'Buscar cliente', 'id' => 'autocomplete']) !!}
           </div>
           <div class="form-group" id="select-tratamientos">
-              {!! Form::label('selectT', 'Tratamientos asignados') !!}
+              {!! Form::label('selectT', 'Tratamiento/s') !!}
               <select id="selectT" class="form-control">
                   <option selected="selected" value="">----</option>
               </select>
           </div>
           <div id="info"></div>
           {!! Form::open(['route' => 'reserva.store', 'method' => 'POST', 'id'=>'fcr']) !!}
+              <div class="form-group">
+                  {!! Form::label('sucursal_id', 'Sucursal') !!}
+                  {!! Form::select('sucursal_id', $sucursales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
+              </div>
               <div class="form-group">
                   {!! Form::label('start', 'Hora de inico') !!}
                   <div class="input-group date datetimepicker" id="datetimepicker2" data-target-input="nearest">
@@ -181,7 +185,7 @@
                       {!! Form::text('start', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker2']) !!}
                   </div>
               </div>
-              <div class="form-group">
+              {{-- <div class="form-group">
                   {!! Form::label('end', 'Hora de finalización') !!}
                   <div class="input-group date datetimepicker" id="datetimepicker3" data-target-input="nearest">
                       <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
@@ -189,21 +193,22 @@
                       </span>
                       {!! Form::text('end', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker3']) !!}
                   </div>
-              </div>
-              <div class="form-group">
-                  {!! Form::label('sucursal_id', 'Sucursal') !!}
-                  {!! Form::select('sucursal_id', $sucursales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
-              </div>
+              </div> --}}
               <div class="form-group">
                   {!! Form::label('user_id', 'Vendedor') !!}
                   {!! Form::select('user_id', $profesionales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
+              </div>
+              <div class="form-group">
+                  {!! Form::label('valor', 'Monto') !!}
+                  {!! Form::number('valor', null,['class' => 'form-control', 'placeholder' => 'Monto', 'min'=> 0]) !!}
               </div>
               <div id="extra"></div>
           {!! Form::close() !!}
       </div>
       <div class="modal-footer">
-          <a class="btn btn-primary" style="color: white" onclick="afcr();">Guardar</a>
-          <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
+          <a class="btn btn-primary" style="color: white" onclick="afcr2();">Guardar y Seguir Reservando</a>
+          <a class="btn btn-primary" style="color: white" onclick="afcr();">Guardar y Salir</a>
+          <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Salir</button>
       </div>
     </div>
   </div>
@@ -223,6 +228,8 @@
       <div class="modal-body">
           <div class="form-group">
               {!! Form::label('cliente2', 'Cliente') !!}
+              <br>
+              {{-- {!! Form::select(null, [], null, ['class' => 'form-control', 'id' => 'autocomplete2']) !!} --}}
               {!! Form::text('cliente2', null,['class' => 'form-control', 'placeholder' => 'Buscar cliente', 'id' => 'autocomplete2']) !!}
           </div>
           <div class="form-group" id="select-tratamientos2">
@@ -272,12 +279,12 @@
                   </div>
               </div>
               <div class="form-group">
-                  {!! Form::label('end', 'Hora de inico') !!}
-                  <div class="input-group date" id="datetimepicker6" data-target-input="nearest">
-                      <span class="input-group-addon" data-target="#datetimepicker6" data-toggle="datetimepicker">
+                  {!! Form::label('end', 'Hora de finalización') !!}
+                  <div class="input-group date" id="datetimepicker6" >
+                      <span class="input-group-addon" data-target="#datetimepicker6">
                           <span class="fa fa-calendar"></span>
                       </span>
-                      {!! Form::text('end', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker6']) !!}
+                      {!! Form::text(null, null,['id' => 'end' ,'class' => 'form-control  datetimepicker-input', 'required', 'disabled' , 'data-target' => '#datetimepicker6']) !!}
                   </div>
               </div>
               <div class="form-group">
@@ -457,7 +464,7 @@ $(function() {
         serverSide: true,
         bLengthChange: false,
         language: {
-            "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+            "url": "{{ asset('js/Spanish.json') }}"
         },
         ajax: '{!! route('cliente.list') !!}',
         columns: [

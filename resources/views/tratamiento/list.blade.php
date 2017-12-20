@@ -28,6 +28,8 @@
     <th>Nombre</th>
     <th>Cantidad de Sesiones</th>
     <th>Precio</th>
+    <th>Duración</th>
+    {{-- <th>Rotativo</th> --}}
     <th>Acción</th>
 </tr>
 @endsection
@@ -39,13 +41,14 @@ $(function() {
         processing: true,
         serverSide: true,
         language: {
-            "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+            "url": "{{ asset('js/Spanish.json') }}"
         },
         ajax: '{!! route('tratamiento.list') !!}',
         columns: [
             { data: 'nombre', name: 'nombre' },
             { data: 'cantidad', name: 'cantidad' },
             { data: 'precio', name: 'precio' },
+            { data: 'duracion', name: 'duracion'},
             { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
                 var edit = '{{ route('tratamiento.edit', ':id')}}'.replace(':id', data);
                 var destroy = '{{ route('tratamiento.destroy', ':id') }}'.replace(':id', data);

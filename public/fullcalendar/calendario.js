@@ -215,9 +215,7 @@ function calendario() {
                 },
                 success: function(response, status, jqXHR) {
                     var events = response;
-                    console.log(events);
                     for (var even of events) {
-                        console.log(even.estado);
                         if(even.estado === 'realizada'){
                             even.color = '#00796B';
                         }
@@ -291,23 +289,35 @@ function afcc(){
 
 function afcr(){
     if($("#fcr")[0].checkValidity()) {
-        var start = new Date($('#fcr input[name=start]').val());
-        var end = new Date($('#fcr input[name=end]').val());
-        if(start < end){
-            $('#fcr').ajaxSubmit({
-                success: function () {
-                    $("#mcr").modal('hide');
-                    $('#fcr')[0].reset();
-                    $("#calendar").fullCalendar('refetchEvents');
-                },
-                error: function () {
-                    console.log('error');
-                }
-            });
-        }else{
-            alert('Por favor ingrese horas validas')
-        }
+        $('#fcr').ajaxSubmit({
+            success: function () {
+                $("#mcr").modal('hide');
+                $('#fcr')[0].reset();
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }else {
+        alert('Los campos no son validos')
+    }
+}
 
+function afcr2(){
+    if($("#fcr")[0].checkValidity()) {
+        $('#fcr').ajaxSubmit({
+            success: function () {
+                // $("#mcr").modal('hide');
+                $('#fcr').find('#sucursal_id').prop('selectedIndex', 0);
+                $('#fcr').find('#start').val('');
+                $('#fcr').find('#end').val('');
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
     }else {
         alert('Los campos no son validos')
     }
@@ -315,22 +325,16 @@ function afcr(){
 
 function afer(){
     if($("#fer")[0].checkValidity()) {
-        var start = new Date($('#fer input[name=start]').val());
-        var end = new Date($('#fer input[name=end]').val());
-        if(start < end){
-            $('#fer').ajaxSubmit({
-                success: function () {
-                    $("#mer").modal('hide');
-                    $("#fer")[0].reset();
-                    $("#calendar").fullCalendar('refetchEvents');
-                },
-                error: function () {
-                    console.log('error');
-                }
-            });
-        }else{
-            alert('Por favor ingrese horas validas')
-        }
+        $('#fer').ajaxSubmit({
+            success: function () {
+                $("#mer").modal('hide');
+                $("#fer")[0].reset();
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
     }else {
         alert('Los campos no son validos')
     }

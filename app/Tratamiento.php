@@ -8,7 +8,9 @@ class Tratamiento extends Model
 {
     protected  $table = "tratamiento";
 
-    protected $fillable = [ 'nombre', 'cantidad', 'precio' ];
+    
+
+    protected $fillable = [ 'nombre', 'cantidad', 'precio', 'duracion', 'rotativo' ];
 
     public function clientes(){
         return $this->belongsToMany('App\Cliente')

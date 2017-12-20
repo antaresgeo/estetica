@@ -164,11 +164,13 @@ class ClienteController extends Controller
         if($ct->saldo === 0){
             return response('El valor del tratamiento ya ha sido cancelado.', 400);
         }
-        if($ct->abonado < $ct->saldo){
+        if($r->valor > $ct->saldo ){
+            return response('El valor a abonar es mayor que el del tratamiento ('.$ct->saldo.')', 400);
+        }
+        if($ct->abonado <= $ct->saldo){
             $ct->abonado = $ct->abonado + $r->valor;
             $ct->saldo = $ct->saldo - $r->valor;
         }
-
         $ct->save();
     }
 }

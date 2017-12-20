@@ -46,9 +46,11 @@ class TratamientoController extends Controller
      */
     public function store(Request $request)
     {
-        $trartamiento = new Tratamiento($request->all());
-        $trartamiento->save();
-        flash('Tratamiento '. $trartamiento->nombre .' guardada con exito.')->success();
+        $tratamiento = new Tratamiento($request->all());
+        $tratamiento->rotativo = $request->has('rotativo');
+        // dd($tratamiento);
+        $tratamiento->save();
+        flash('Tratamiento '. $tratamiento->nombre .' guardada con exito.')->success();
         return redirect()->route('tratamiento.index');
     }
 
@@ -86,6 +88,8 @@ class TratamientoController extends Controller
         $tratamiento->nombre = $request->nombre;
         $tratamiento->cantidad = $request->cantidad;
         $tratamiento->precio = $request->precio;
+        $tratamiento->duracion = $request->duracion;
+        $tratamiento->rotativo = $request->has('rotativo');
         $tratamiento->save();
         flash('Tratamiento '. $tratamiento->nombre .' guardada con exito.')->success();
         return redirect()->route('tratamiento.index');

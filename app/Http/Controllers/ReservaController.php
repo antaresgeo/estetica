@@ -11,6 +11,7 @@ use App\Tratamiento;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use \DateTime;
+use \DateInterval;
 class ReservaController extends Controller
 {
     /**
@@ -30,11 +31,17 @@ class ReservaController extends Controller
     public function index(Request $request)
     {
         //dd($request->all());
-        $reservas = Reserva::orderBy('id', 'ASC')
-            ->whereBetween('start', [new DateTime($request->start), new DateTime($request->end)])
-            ->where('estado', $request->estado)
-            ->where('sucursal_id', $request->sucursal)
-            ->get();
+        $reservas = Reserva::orderBy('id', 'ASC');
+        if($request->start and $request->end){
+            $reservas = $reservas->whereBetween('start', [new DateTime($request->start), new DateTime($request->end)]);
+        }
+        if($request->estado and $request->estado != 'todas'){
+            $reservas = $reservas->where('estado', $request->estado);
+        }
+        if($request->sucursal){
+            $reservas = $reservas->where('sucursal_id', $request->sucursal);
+        }
+        $reservas = $reservas->get();
 
         foreach ($reservas as $reserva) {
             $ct = ClienteTratamiento::find($reserva->cliente_tratamiento_id);
@@ -79,13 +86,25 @@ class ReservaController extends Controller
      */
     public function store(Request $request)
     {
+        $ct = ClienteTratamiento::find($request->cliente_tratamiento_id);
+        $tt = Tratamiento::find($ct->tratamiento_id);
+        if($ct->saldo === 0){
+            return response('El valor del tratamiento ya ha sido cancelado.', 400);
+        }
+        if($request->valor > $ct->saldo ){
+            return response('El valor a abonar es mayor que el del tratamiento ('.$ct->saldo.')', 400);
+        }
+        if($ct->abonado <= $ct->saldo){
+            $ct->abonado = $ct->abonado + $request->valor;
+            $ct->saldo = $ct->saldo - $request->valor;
+        }
         $reserva = new Reserva($request->all());
         $reserva->start = new DateTime($request->start);
-        $reserva->end = new DateTime($request->end);
+        $end = new DateTime($request->start);
+        $reserva->end = $end->add(new DateInterval('PT' . $tt->duracion . 'M'));
         $reserva->cliente_tratamiento_id = $request->cliente_tratamiento_id;
         $reserva->save();
-        // flash('Tratamiento '. $trartamiento->nombre .' guardada con exito.')->success();
-        // return redirect()->route('reserva.index');
+        $ct->save();
     }
 
     /**
@@ -120,8 +139,11 @@ class ReservaController extends Controller
     public function update(Request $request, $id)
     {
         $reserva = Reserva::find($id);
+        $ct = ClienteTratamiento::find($request->cliente_tratamiento_id);
+        $tt = Tratamiento::find($ct->tratamiento_id);
         $reserva->start = $request->start;
-        $reserva->end = $request->end;
+        $end = new DateTime($request->start);
+        $reserva->end = $end->add(new DateInterval('PT' . $tt->duracion . 'M'));
         $reserva->sucursal_id = $request->sucursal_id;
         $reserva->user_id = $request->user_id;
         $reserva->estado = $request->estado;

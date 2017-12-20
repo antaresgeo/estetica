@@ -32,6 +32,14 @@
     {!! Form::number('precio', null, ['class' => 'form-control', 'required', 'placeholder' => 'Precio', 'min' => 0]) !!}
 </div>
 <div class="form-group">
+    {!! Form::label('duracion', 'Duración (minutos)') !!}
+    {!! Form::number('duracion', null, ['class' => 'form-control', 'required', 'placeholder' => 'Duración en minutos', 'min' => 0]) !!}
+</div>
+<div class="form-group">
+    {!! Form::label('rotativo', 'Rotativo') !!}
+    {!! Form::checkbox('rotativo', 'yes', null) !!}
+</div>
+<div class="form-group">
     {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
     <a href="{{ route('tratamiento.index') }}" class="btn btn-primary">Cancelar</a>
 </div>
