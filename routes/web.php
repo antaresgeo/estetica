@@ -86,3 +86,8 @@ Route::get('/reserva/{id}/delete', [
     'uses' => 'ReservaController@destroy',
     'as' => 'reserva.destroy'
 ]);
+Route::resource('/rotativo', 'RotativoController');
+Route::get('/rotativos', [
+    'uses' => 'RotativoController@anyData',
+    'as' => 'rotativo.list'
+]);

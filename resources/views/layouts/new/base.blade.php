@@ -12,7 +12,8 @@
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" rel="stylesheet">
     <link href="{{ asset('css/sb-admin.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet"> --}}
+    <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/select2-bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
@@ -101,7 +102,9 @@
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/jquery.form.min.js') }}"></script>
-    <script src="{{ asset('js/tempusdominus-bootstrap-4.js') }}"></script>
+    {{-- <script src="{{ asset('js/tempusdominus-bootstrap-4.js') }}"></script> --}}
+    <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datetimepicker.es.js') }}"></script>
     <script src="{{ asset('js/jquery.autocomplete.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin.min.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>

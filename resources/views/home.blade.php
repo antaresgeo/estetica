@@ -90,11 +90,11 @@
             </div> --}}
             <div class="form-group">
                 {!! Form::label('facha_nacimiento', 'Fecha de nacimiento') !!}
-                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                    <span class="input-group-addon" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                <div class="input-group date">
+                    <span class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </span>
-                    {!! Form::text('facha_nacimiento', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker1']) !!}
+                    {!! Form::text('facha_nacimiento', null,['class' => 'form-control', 'required', 'disabled', 'id' => 'datetimepicker1']) !!}
                 </div>
             </div>
             {{-- <div class="form-group">
@@ -104,7 +104,8 @@
         {!! Form::close() !!}
       </div>
       <div class="modal-footer">
-          <a class="btn btn-primary" style="color: white" onclick="afcc();">Guardar</a>
+          <a class="btn btn-primary" style="color: white" onclick="afcc(false);">Guardar y asignar Tratamiento</a>
+          <a class="btn btn-primary" style="color: white" onclick="afcc(true);">Guardar y salir</a>
           <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
       </div>
     </div>
@@ -127,7 +128,6 @@
               <table class="table table-bordered" width="100%" cellspacing="0" id="datatable-clientes">
                   <thead class="thead-light">
                       <tr>
-                          {{-- <th>id</th> --}}
                           <th>Nombre</th>
                           <th>Telefono</th>
                           <th>DNI</th>
@@ -141,8 +141,8 @@
           </div>
       </div>
       <div class="modal-footer">
-          {{-- <a class="btn btn-primary" style="color: white" onclick="afcc();">Guardar</a> --}}
-          <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
+          <a class="btn btn-primary" style="color: white" onclick="attor();">Crear Reserva</a>
+          <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Salir</button>
       </div>
     </div>
   </div>
@@ -161,8 +161,8 @@
       </div>
       <div class="modal-body">
           <div class="form-group">
-              {!! Form::label('cliente', 'Cliente') !!}
-              {!! Form::text('cliente', null,['class' => 'form-control', 'placeholder' => 'Buscar cliente', 'id' => 'autocomplete']) !!}
+               {!! Form::label('selectCliente', 'Cliente') !!}
+               <select id="selectCliente" class="form-control"></select>
           </div>
           <div class="form-group" id="select-tratamientos">
               {!! Form::label('selectT', 'Tratamiento/s') !!}
@@ -178,22 +178,13 @@
               </div>
               <div class="form-group">
                   {!! Form::label('start', 'Hora de inico') !!}
-                  <div class="input-group date datetimepicker" id="datetimepicker2" data-target-input="nearest">
-                      <span class="input-group-addon" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                  <div class="input-group">
+                      <span class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </span>
-                      {!! Form::text('start', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker2']) !!}
+                      {!! Form::text('start', null,['class' => 'form-control', 'required', 'disabled' , 'id' => 'datetimepicker2']) !!}
                   </div>
               </div>
-              {{-- <div class="form-group">
-                  {!! Form::label('end', 'Hora de finalización') !!}
-                  <div class="input-group date datetimepicker" id="datetimepicker3" data-target-input="nearest">
-                      <span class="input-group-addon" data-target="#datetimepicker3" data-toggle="datetimepicker">
-                          <span class="fa fa-calendar"></span>
-                      </span>
-                      {!! Form::text('end', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker3']) !!}
-                  </div>
-              </div> --}}
               <div class="form-group">
                   {!! Form::label('user_id', 'Vendedor') !!}
                   {!! Form::select('user_id', $profesionales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
@@ -284,7 +275,7 @@
                       <span class="input-group-addon" data-target="#datetimepicker6">
                           <span class="fa fa-calendar"></span>
                       </span>
-                      {!! Form::text(null, null,['id' => 'end' ,'class' => 'form-control  datetimepicker-input', 'required', 'disabled' , 'data-target' => '#datetimepicker6']) !!}
+                      {!! Form::text(null, null,['id' => 'end' ,'class' => 'form-control', 'required', 'disabled' , 'data-target' => '#datetimepicker6']) !!}
                   </div>
               </div>
               <div class="form-group">
@@ -324,6 +315,7 @@
     .autocomplete-group { padding: 2px 5px; }
     .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
     .fc-time-grid-event .fc-time, .fc-time-grid-event .fc-title{color: white; font-weight: 600;}
+    /* .select2-container { width: 190px !important } */
 </style>
 @endpush
 @push('scripts')
@@ -335,54 +327,73 @@
 @push('scripts')
 <script>
 $(function() {
-    $('#autocomplete').autocomplete({
-        serviceUrl: '{{ route('cliente.buscar')}}',
-        paramName: 'sh',
-        transformResult: function(response) {
-           return {
-               suggestions: $.map(JSON.parse(response), function(dataItem) {
-                   return { value: dataItem.nombre, data: dataItem };
-               })
-           };
-       },
-        onSelect: function (suggestion) {
-            $.ajax({
-                url: '{{ route('cliente.saldo', ['id' => ':id']) }}'.replace(':id', suggestion.data.id),
-                type: 'GET',
-                success: function(response, status, jqXHR) {
-                    $('#info').html(`
-                        <p>Total aquirido: ${response.precio}</p>
-                        <p>Total Abonado: ${response.abonado}</p>
-                        <p>Saldo Total: ${response.saldo}</p>`);
-                    $('#mcr').on('hidden.bs.modal', function (e) {
-                        $('#fcr')[0].reset();
-                        $('#info').empty();
-                    });
-                },
-                error: function(response, status, errorThrown) {
-                    console.log(response);
+    $('#selectT').select2({ dropdownParent: $("#mcr"), width: '100%'});
+    $('#sucursal_id').select2({ dropdownParent: $("#mcr"), width: '100%'});
+    $('#user_id').select2({ dropdownParent: $("#mcr"), width: '100%'});
+    $('#selectCliente').select2({
+        dropdownParent: $("#mcr"),
+        width: '100%',
+        ajax: {
+            url: '{{ route('cliente.buscar')}}',
+            dataType: 'json',
+            data: function (term, page) {
+                var query = {
+                    sh: term.term
                 }
-            });
-            $.ajax({
-                url: '{{ route('cliente.tratamientos', ['id' => ':id']) }}'.replace(':id', suggestion.data.id ),
-                type: 'GET',
-                success: function(response, status, jqXHR) {
-                    var s = $('<select id="selectT" class="form-control"/>');
-                    s.append($('<option selected="selected" value/>').html('----'));
-                    for (var i in response) {
-                        s.append($('<option value="'+response[i].pivot.id+'"/>').html(response[i].nombre + ' ' + response[i].updated_at.split(' ')[0]));
+                return query;
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: $.map(data, function (dataItem) {
+                        return { id: dataItem.id, text: dataItem.nombre, orginal: dataItem }
+                    }),
+                    pagination: {
+                        more: false
                     }
-                    $('#selectT').remove();
-                    $('#select-tratamientos').append(s);
-                    $('#selectT').change(function() {
-                        $('#extra').html('<input type="hidden" name="cliente_tratamiento_id" value="'+$(this).val()+'"/>');
-                    })
-                },
-                error: function(response, status, errorThrown) {
-                    console.log(response);
-                }
-            });
+                };
+            }
         }
+    });
+    $('#selectCliente').on("select2:selecting", function(e) {
+        var op = e.params.args.data.orginal;
+        $.ajax({
+            url: '{{ route('cliente.saldo', ['id' => ':id']) }}'.replace(':id', op.id),
+            type: 'GET',
+            success: function(response, status, jqXHR) {
+                $('#info').html(`
+                    <p>Total aquirido: ${response.precio}</p>
+                    <p>Total Abonado: ${response.abonado}</p>
+                    <p>Saldo Total: ${response.saldo}</p>`);
+                $('#mcr').on('hidden.bs.modal', function (e) {
+                    $('#fcr')[0].reset();
+                    $('#info').empty();
+                });
+            },
+            error: function(response, status, errorThrown) {
+                console.log(response);
+            }
+        });
+        $.ajax({
+            url: '{{ route('cliente.tratamientos', ['id' => ':id']) }}'.replace(':id', op.id ),
+            type: 'GET',
+            success: function(response, status, jqXHR) {
+                var s = $('<select id="selectT" class="form-control"/>');
+                s.append($('<option selected="selected" value/>').html('----'));
+                for (var i in response) {
+                    s.append($('<option value="'+response[i].pivot.id+'"/>').html(response[i].nombre + ' ' + response[i].updated_at.split(' ')[0]));
+                }
+                $('#selectT').remove();
+                $('#select-tratamientos').append(s);
+                $('#selectT').select2({ dropdownParent: $("#mcr"), width: '100%'});
+                $('#selectT').change(function() {
+                    $('#extra').html('<input type="hidden" name="cliente_tratamiento_id" value="'+$(this).val()+'"/>');
+                })
+            },
+            error: function(response, status, errorThrown) {
+                console.log(response);
+            }
+        });
     });
 
     $('#autocomplete2').autocomplete({
@@ -437,50 +448,19 @@ $(function() {
         }
     });
 
-    $('#datetimepicker1').datetimepicker({
-        format:'YYYY-MM-DD',
-        icons: {
-            time: "fa fa-clock-o",
-            date: "fa fa-calendar",
-            up: "fa fa-arrow-up",
-            down: "fa fa-arrow-down"
-        }
-    });
 
-    $('.datetimepicker').datetimepicker({
-        format:'YYYY-MM-DD HH:mm',
-        icons: {
-            time: "fa fa-clock-o",
-            date: "fa fa-calendar",
-            up: "fa fa-arrow-up",
-            down: "fa fa-arrow-down"
-        }
-    });
-
-
-
-    $('#datatable-clientes').DataTable({
-        processing: true,
-        serverSide: true,
-        bLengthChange: false,
-        language: {
-            "url": "{{ asset('js/Spanish.json') }}"
+    clienteTable(
+        '{{ asset('js/Spanish.json') }}',
+        '{!! route('cliente.list') !!}',
+        function ( data, type, row, meta ) {
+            var select = '{!! Form::select(null, $tratamientos, null, ['class' => 'form-control select2filter', 'id' => 'tratamiento-filter-:id', 'placeholder' => '----']) !!}';
+            return select.replace(':id', data);
         },
-        ajax: '{!! route('cliente.list') !!}',
-        columns: [
-            { data: 'nombre', name: 'nombre' },
-            { data: 'telefono', name: 'telefono' },
-            { data: 'identificacion', name: 'identificacion' },
-            { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
-                var select = '{!! Form::select(null, $tratamientos, null, ['class' => 'form-control', 'id' => 'tratamiento-filter-:id', 'placeholder' => '----']) !!}';
-                return select.replace(':id', data);
-            }},
-            { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
-                var asignar = '{{ route('cliente.edit', ':id')}}'.replace(':id', data);
-                return '<a href="#" class="btn btn-warning" style="margin-right: 7px;" onclick="asignar('+data+',\''+row.nombre+'\')"><i class="fa fa-pencil" aria-hidden="true"></i> Asignar Tratamiento</a>';
-            }}
-        ]
-    });
+        function ( data, type, row, meta ) {
+            var asignar = '{{ route('cliente.edit', ':id')}}'.replace(':id', data);
+            return '<a href="#" class="btn btn-warning" style="margin-right: 7px;" onclick="asignar('+data+',\''+row.nombre+'\', \'{{ route('cliente.tratamiento.add')}}\'  )"><i class="fa fa-pencil" aria-hidden="true"></i> Asignar Tratamiento</a>';
+        }
+    );
 });
 </script>
 @endpush

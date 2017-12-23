@@ -12,8 +12,57 @@ $(document).ready(function() {
         return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
     };
 
+    initdatepicker();
+
     calendario();
+    // $('.form_datetime').datetimepicker({
+    //     //language:  'fr',
+    //     weekStart: 1,
+    //     todayBtn:  1,
+	// 	autoclose: 1,
+	// 	todayHighlight: 1,
+	// 	startView: 2,
+	// 	forceParse: 0,
+    //     showMeridian: 1
+    // });
+	// $('.form_date').datetimepicker({
+    //     language:  'fr',
+    //     weekStart: 1,
+    //     todayBtn:  1,
+	// 	autoclose: 1,
+	// 	todayHighlight: 1,
+	// 	startView: 2,
+	// 	minView: 2,
+	// 	forceParse: 0
+    // });
+	// $('.form_time').datetimepicker({
+    //     language:  'fr',
+    //     weekStart: 1,
+    //     todayBtn:  1,
+	// 	autoclose: 1,
+	// 	todayHighlight: 1,
+	// 	startView: 1,
+	// 	minView: 0,
+	// 	maxView: 1,
+	// 	forceParse: 0
+    // });
+
 });
+
+function initdatepicker() {
+    $('#datetimepicker1').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:  'es',
+        minView: 2,
+        autoclose: 1,
+    });
+    $('#datetimepicker2').datetimepicker({
+        format:'yyyy-mm-dd hh:ii',
+        language:  'es',
+        daysOfWeekDisabled: '0',
+        autoclose: 1,
+    });
+}
 
 function cargando(query) {
     var loading = `<div class="full-height"><div class="preloader-wrapper big active">
@@ -271,11 +320,15 @@ function calendario() {
     })
 }
 
-function afcc(){
+function afcc(close){
     if($("#fcc")[0].checkValidity()) {
         $('#fcc').ajaxSubmit({
             success: function () {
+                $('#datatable-clientes').DataTable().ajax.reload();
                 $("#mcc").modal('hide');
+                if(!close){
+                    $("#mat").modal('show');
+                }
                 $("#fcc")[0].reset();
             },
             error: function () {
@@ -355,22 +408,26 @@ function afab(){
     }else {
         alert('Los campos no son validos')
     }
-
 }
 
-function asignar(cliente_id, name){
+function attor(){
+    $('#mat').modal('hide');
+    $('#mcr').modal('show');
+}
+
+function asignar(cliente_id, name, urlD){
     var tratamiento_id = $('#tratamiento-filter-'+cliente_id).val();
     if(tratamiento_id != ''){
         if(confirm('Esta seguro de asignar el tratamiento '+$('#tratamiento-filter-'+cliente_id+' option:selected').text()+' al cliente '+name)){
             $.ajax({
-                url: '/estetica/public/cliente/tratamiento/add',
+                url: urlD,
                 type: 'GET',
                 data: {
                     c: cliente_id,
                     t: tratamiento_id
                 },
                 success: function(response, status, jqXHR) {
-                    $("#mat").modal('hide');
+                    alert('Tratamiento asignado')
                 },
                 error: function(response, status, errorThrown) {
                     console.log(response);
@@ -378,4 +435,36 @@ function asignar(cliente_id, name){
             });
         }
     }
+}
+
+function clienteTable(lan, url, fnSelect, fnBtn) {
+    console.log('ok');
+    $('#datatable-clientes').DataTable({
+        processing: true,
+        serverSide: true,
+        bLengthChange: false,
+        language: {
+            url: lan
+        },
+        ajax: url,
+        columns: [
+            { data: 'nombre', name: 'nombre' },
+            { data: 'telefono', name: 'telefono' },
+            { data: 'identificacion', name: 'identificacion' },
+            { data: 'id', name: 'id', searchable: false, orderable: false, render: fnSelect},
+            { data: 'id', name: 'id', searchable: false, orderable: false, render: fnBtn}
+        ],
+        drawCallback: function( settings ) {
+            $('.select2filter').select2({ dropdownParent: $("#mat"), width: '230px'});
+        }
+    });
+}
+
+function ajaxGet(url, fnSuccess, fnError) {
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: fnSuccess,
+        error: fnError,
+    });
 }

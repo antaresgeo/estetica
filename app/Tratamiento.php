@@ -8,7 +8,7 @@ class Tratamiento extends Model
 {
     protected  $table = "tratamiento";
 
-    
+
 
     protected $fillable = [ 'nombre', 'cantidad', 'precio', 'duracion', 'rotativo' ];
 
@@ -17,5 +17,10 @@ class Tratamiento extends Model
             ->withPivot('id','catidad', 'precio', 'abonado', 'saldo')
             ->withTimestamps();
             // ->using('App\ClienteTratamiento');
+    }
+
+    public function rotativoFn()
+    {
+        return $this->hasOne('App\Rotativo');
     }
 }

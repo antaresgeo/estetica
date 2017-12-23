@@ -34,10 +34,10 @@
           <span class="nav-link-text">Tratamientos</span>
         </a>
     </li>
-    {{-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Reservas">
-        <a class="nav-link" href="{{ route('reserva.index') }}">
+    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Reservas">
+        <a class="nav-link" href="{{ route('rotativo.index') }}">
           <i class="fa fa-fw fa-user" aria-hidden="true"></i>
-          <span class="nav-link-text">Reservas</span>
+          <span class="nav-link-text">Tratamientos Rotativos</span>
         </a>
-    </li> --}}
+    </li>
 </ul>

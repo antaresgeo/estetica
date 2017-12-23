@@ -13,4 +13,8 @@ class Sucursal extends Model
     public function reservas(){
         return $this->hasMany('App\Reserva');
     }
+
+    public function rotativos(){
+        return $this->hasMany('App\Reserva');
+    }
 }

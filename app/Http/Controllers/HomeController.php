@@ -30,7 +30,11 @@ class HomeController extends Controller
     {
         $tratamientos = [];
         foreach (Tratamiento::all() as $tratamiento) {
-            $tratamientos[$tratamiento->id] = $tratamiento->nombre;
+            if($tratamiento->rotativo){
+                $tratamientos['Rotativo'][$tratamiento->id] = $tratamiento->nombre.' (R)';
+            }else{
+                $tratamientos['Normal'][$tratamiento->id] = $tratamiento->nombre;
+            }
         }
         $sucursales = [];
         foreach (Sucursal::all() as $sucursal) {
