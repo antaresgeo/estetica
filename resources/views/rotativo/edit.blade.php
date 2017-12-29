@@ -34,26 +34,13 @@
     {!! Form::text('profesional', $rotativo->profesional,['class' => 'form-control', 'required' , 'placeholder' => 'nombre']) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('lunes', 'Lunes') !!}
-    {!! Form::checkbox('lunes', 'yes', $rotativo->lunes) !!}
-    <span style="margin-right:7px;"></span>
-    {!! Form::label('martes', 'Martes') !!}
-    {!! Form::checkbox('martes', 'yes', $rotativo->martes) !!}
-    <span style="margin-right:7px;"></span>
-    {!! Form::label('miercoles', 'Miercoles') !!}
-    {!! Form::checkbox('miercoles', 'yes', $rotativo->miercoles) !!}
-    <span style="margin-right:7px;"></span>
-    {!! Form::label('jueves', 'Jueves') !!}
-    {!! Form::checkbox('jueves', 'yes', $rotativo->jueves) !!}
-    <span style="margin-right:7px;"></span>
-    {!! Form::label('viernes', 'Viernes') !!}
-    {!! Form::checkbox('viernes', 'yes', $rotativo->viernes) !!}
-    <span style="margin-right:7px;"></span>
-    {!! Form::label('sabado', 'Sabado') !!}
-    {!! Form::checkbox('sabado', 'yes', $rotativo->sabado) !!}
-    <span style="margin-right:7px;"></span>
-    {!! Form::label('domingo', 'Domingo') !!}
-    {!! Form::checkbox('domingo', 'yes', $rotativo->domingo) !!}
+    {!! Form::label('datetimepicker10', 'Fecha de nacimiento') !!}
+    <div class="input-group date">
+        <span class="input-group-addon">
+            <span class="fa fa-calendar"></span>
+        </span>
+        {!! Form::text('fechas', $rotativo->val_fechas,['class' => 'form-control', 'required', 'readonly', 'id' => 'datetimepicker10']) !!}
+    </div>
 </div>
 <div class="form-group">
     {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
@@ -61,3 +48,16 @@
 </div>
 {!! Form::close() !!}
 @endsection
+
+@push('scripts')
+<script>
+    $(function() {
+        $('#datetimepicker10').datepicker({
+            startDate: new Date(),
+            multidate: true,
+            format: 'yyyy-mm-dd',
+            language:  'es'
+        });
+    });
+</script>
+@endpush

@@ -91,3 +91,11 @@ Route::get('/rotativos', [
     'uses' => 'RotativoController@anyData',
     'as' => 'rotativo.list'
 ]);
+Route::get('/rotativo/{id}/delete', [
+    'uses' => 'RotativoController@destroy',
+    'as' => 'rotativo.destroy'
+]);
+Route::get('/rotativo/{sucursal}/{tratamiento}', [
+    'uses' => 'RotativoController@valid',
+    'as' => 'rotativo.valid'
+]);

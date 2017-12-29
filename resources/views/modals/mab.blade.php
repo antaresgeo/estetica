@@ -9,10 +9,8 @@
       </div>
       <div class="modal-body">
           <div class="form-group">
-              {!! Form::label('cliente2', 'Cliente') !!}
-              <br>
-              {{-- {!! Form::select(null, [], null, ['class' => 'form-control', 'id' => 'autocomplete2']) !!} --}}
-              {!! Form::text('cliente2', null,['class' => 'form-control', 'placeholder' => 'Buscar cliente', 'id' => 'autocomplete2']) !!}
+               {!! Form::label('selectCliente2', 'Cliente') !!}
+               <select id="selectCliente2" class="form-control"></select>
           </div>
           <div class="form-group" id="select-tratamientos2">
               {!! Form::label('selectT2', 'Tratamientos asignados') !!}

@@ -18,13 +18,7 @@ class AddRotativoTable extends Migration
             $table->integer('sucursal_id')->unsigned();
             $table->integer('tratamiento_id')->unsigned();
             $table->string('profesional');
-            $table->boolean('lunes')->default(false);
-            $table->boolean('martes')->default(false);
-            $table->boolean('miercoles')->default(false);
-            $table->boolean('jueves')->default(false);
-            $table->boolean('viernes')->default(false);
-            $table->boolean('sabado')->default(false);
-            $table->boolean('domingo')->default(false);
+            $table->timestamps();
 
             $table->foreign('sucursal_id')->references('id')->on('sucursal')->onDelete('cascade');
             $table->foreign('tratamiento_id')->references('id')->on('tratamiento')->onDelete('cascade');

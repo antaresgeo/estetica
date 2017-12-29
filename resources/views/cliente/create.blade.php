@@ -42,12 +42,12 @@
     {!! Form::text('localidad', null,['class' => 'form-control', 'required' , 'placeholder' => 'localidad']) !!}
 </div> --}}
 <div class="form-group">
-    {!! Form::label('facha_nacimiento', 'Fecha de nacimiento') !!}
-    <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-        <span class="input-group-addon" data-target="#datetimepicker1" data-toggle="datetimepicker">
+    {!! Form::label('datetimepicker10', 'Fecha de nacimiento') !!}
+    <div class="input-group date">
+        <span class="input-group-addon">
             <span class="fa fa-calendar"></span>
         </span>
-        {!! Form::text('facha_nacimiento', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker1']) !!}
+        {!! Form::text('facha_nacimiento', null,['class' => 'form-control', 'required', 'readonly', 'id' => 'datetimepicker10']) !!}
     </div>
 </div>
 {{-- <div class="form-group">
@@ -63,16 +63,11 @@
 
 @push('scripts')
 <script>
-$(function() {
-    $('#datetimepicker1').datetimepicker({
-        format:'YYYY-MM-DD',
-        icons: {
-            time: "fa fa-clock-o",
-            date: "fa fa-calendar",
-            up: "fa fa-arrow-up",
-            down: "fa fa-arrow-down"
-        }
+    $(function() {
+        $('#datetimepicker10').datepicker({
+            format: 'yyyy-mm-dd',
+            language:  'es'
+        });
     });
-});
 </script>
 @endpush

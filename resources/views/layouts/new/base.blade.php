@@ -13,11 +13,28 @@
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" rel="stylesheet">
     <link href="{{ asset('css/sb-admin.css') }}" rel="stylesheet">
     {{-- <link href="{{ asset('css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet"> --}}
+    {{-- <link href="{{ asset('css/bootstrap-datepicker.min.css') }}" rel="stylesheet"> --}}
+    {{-- <link href="{{ asset('css/bootstrap-datepicker.standalone.min.css') }}" rel="stylesheet"> --}}
+    {{-- <link href="{{ asset('css/bootstrap-datepicker3.min.css') }}" rel="stylesheet"> --}}
+    <link href="{{ asset('css/bootstrap-datepicker3.standalone.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/select2-bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     @stack('css')
+    <style media="screen">
+        .modal-dialog.table{ max-width: 70%; }
+        .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+        .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+        .autocomplete-selected { background: #F0F0F0; }
+        .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+        .autocomplete-group { padding: 2px 5px; }
+        .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+        .fc-time-grid-event .fc-time, .fc-time-grid-event .fc-title{color: white; font-weight: 600;}
+        td.day:not(.disabled) {
+            border: 1px solid #ccc !important;
+        }
+    </style>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -103,6 +120,8 @@
     <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/jquery.form.min.js') }}"></script>
     {{-- <script src="{{ asset('js/tempusdominus-bootstrap-4.js') }}"></script> --}}
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-datetimepicker.es.js') }}"></script>
     <script src="{{ asset('js/jquery.autocomplete.min.js') }}"></script>

@@ -23,14 +23,32 @@
               <div class="form-group">
                   {!! Form::label('sucursal_id', 'Sucursal') !!}
                   {!! Form::select('sucursal_id', $sucursales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
+
               </div>
-              <div class="form-group">
-                  {!! Form::label('datetimepicker2', 'Hora de inico') !!}
-                  <div class="input-group">
-                      <span class="input-group-addon">
-                          <span class="fa fa-calendar"></span>
-                      </span>
-                      {!! Form::text('start', null,['class' => 'form-control', 'required', 'readonly', 'size' =>'16', 'id' => 'datetimepicker2']) !!}
+              <div class="row">
+                  <div class="col-lg-8">
+                      <div class="form-group">
+                          {!! Form::label('datetimepicker2', 'Fecha') !!}
+                          <div class="input-group">
+                              <span class="input-group-addon">
+                                  <span class="fa fa-calendar"></span>
+                              </span>
+                              {!! Form::text('start1', null,['class' => 'form-control', 'required', 'readonly', 'size' =>'16', 'id' => 'datetimepicker2']) !!}
+                          </div>
+                          <small id="startBlock" class="form-text text-muted"></small>
+                      </div>
+                  </div>
+                  <div class="col-lg-4">
+                      <div class="form-group">
+                          {!! Form::label('datetimepicker3', 'Hora de inico') !!}
+                          <div class="input-group">
+                              <span class="input-group-addon">
+                                  <span class="fa fa-clock-o"></span>
+                              </span>
+                              {!! Form::text('start2', null,['class' => 'form-control', 'required', 'readonly', 'size' =>'16', 'id' => 'datetimepicker3']) !!}
+                          </div>
+                          <small id="startBlock" class="form-text text-muted"></small>
+                      </div>
                   </div>
               </div>
               <div class="form-group">

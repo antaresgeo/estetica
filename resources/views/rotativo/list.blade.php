@@ -26,13 +26,7 @@
     <th>Sucursal</th>
     <th>Tratamiento</th>
     <th>Profesional</th>
-    <th>Lun</th>
-    <th>Mar</th>
-    <th>Mier</th>
-    <th>Jue</th>
-    <th>Vie</th>
-    <th>Sab</th>
-    <th>Dom</th>
+    <th>Fechas</th>
     <th>Acción</th>
 </tr>
 @endsection
@@ -55,16 +49,11 @@ $(function() {
                 return row.tratatamiento_nombre;
             }},
             { data: 'profesional', name: 'profesional' },
-            { data:'lunes', name: 'lunes', render: renderbool},
-            { data:'martes', name: 'martes', render: renderbool},
-            { data:'miercoles', name: 'miercoles', render: renderbool},
-            { data:'jueves', name: 'jueves', render: renderbool},
-            { data:'viernes', name: 'viernes', render: renderbool},
-            { data:'sabado', name: 'sabado', render: renderbool},
-            { data:'domingo', name: 'domingo', render: renderbool},
+            { data:'fechas', searchable: false, orderable: false},
             { data: 'id', name: 'id', searchable: false, orderable: false, render: function ( data, type, row, meta ) {
                 var edit = '{{ route('rotativo.edit', ':id')}}'.replace(':id', data);
                 var destroy = '{{ route('rotativo.destroy', ':id') }}'.replace(':id', data);
+                console.log(destroy);
                 return '<a href="'+ edit +'" class="btn btn-warning" style="margin-right: 7px;"><i class="fa fa-pencil" aria-hidden="true"></i></a><a href="'+destroy+'" class="btn btn-danger" style="margin-right: 7px;"><i class="fa fa-trash" aria-hidden="true"></i></a>'
             }}
         ]

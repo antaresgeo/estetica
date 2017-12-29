@@ -78,17 +78,6 @@
 
 @push('css')
 <link rel="stylesheet" href="{{ asset('fullcalendar/fullcalendar.min.css') }}">
-<style media="screen">
-    .modal-dialog.table{ max-width: 70%; }
-    .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-    .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
-    .autocomplete-selected { background: #F0F0F0; }
-    .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
-    .autocomplete-group { padding: 2px 5px; }
-    .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
-    .fc-time-grid-event .fc-time, .fc-time-grid-event .fc-title{color: white; font-weight: 600;}
-    /* .select2-container { width: 190px !important } */
-</style>
 @endpush
 @push('scripts')
 <script src="{{ asset('fullcalendar/fullcalendar.min.js') }}"></script>
@@ -100,9 +89,79 @@
 <script>
 $(function() {
     $('#selectT').select2({ dropdownParent: $("#mcr"), width: '100%'});
+    $('#selectT').on("select2:selecting", function (e) {
+        sucursaltratamiento($('#sucursal_id').val(), e.params.args.data.id);
+    });
     $('#sucursal_id').select2({ dropdownParent: $("#mcr"), width: '100%'});
+    $('#sucursal_id').on("select2:selecting", function (e) {
+        sucursaltratamiento(e.params.args.data.id, $('#selectT').val(), );
+    });
     $('#user_id').select2({ dropdownParent: $("#mcr"), width: '100%'});
+
+    // var sucursal_id = ;
+    // var tratamiento_id = $('#selectT').val();
+
+    function sucursaltratamiento(sucursal_id, tratamiento_id) {
+        if(sucursal_id && tratamiento_id){
+            $.ajax({
+                url: '{{ route('rotativo.valid', ['sucursal' => ':sucursal', 'tratamiento' => ':tratamiento']) }}'
+                    .replace(':sucursal', sucursal_id)
+                    .replace(':tratamiento', tratamiento_id),
+                type: 'GET',
+                success: function(response, status, jqXHR) {
+                    console.log('o.o');
+                    if(response.res){
+                        console.log(response.data);
+                        $('#datetimepicker2').datepicker('destroy');
+                        $('#datetimepicker2').datepicker({
+                            startDate: new Date(),
+                            format:'yyyy-mm-dd',
+                            language:  'es',
+                            autoclose: true,
+                            beforeShowDay: function (date) {
+                                var year = date.getFullYear();
+                                var mes = (date.getMonth() + 1);
+                                var month = (mes<9? '0'+mes: mes);
+                                var date = (date.getDate()<9? '0'+date.getDate(): date.getDate());
+                                var allDates =  year + '-' + month + '-' + date;
+                                console.log(allDates);
+                                return (response.data.indexOf(allDates) != -1?true:false);
+                            }
+                        });
+                        $('#datetimepicker3').datepicker('remove')
+                        $('#datetimepicker3').datetimepicker({
+                            startView: 1,
+                            format:'hh:ii',
+                            language:  'es',
+                            autoclose: true
+                        });
+                        $('#startBlock').text('Las reservas de este tratamiento en esta sucursal tienen dias no disponibles, parareceran dectivados al tratar de selecionarlos');
+                    }else{
+                        $('#datetimepicker2').datepicker('destroy')
+                        $('#datetimepicker2').datepicker({
+                            startDate: new Date(),
+                            format:'yyyy-mm-dd',
+                            language:  'es',
+                            autoclose: true,
+                        });
+                        $('#datetimepicker3').datepicker('remove')
+                        $('#datetimepicker3').datetimepicker({
+                            startView: 1,
+                            format:'hh:ii',
+                            language:  'es',
+                            autoclose: true
+                        });
+                        $('#startBlock').text('');
+                    }
+                },
+                error: function(response, status, errorThrown) {
+                    console.log(response);
+                }
+            });
+        }
+    }
     $('#selectCliente').select2({
+        placeholder: '----',
         dropdownParent: $("#mcr"),
         width: '100%',
         ajax: {
@@ -127,6 +186,35 @@ $(function() {
             }
         }
     });
+
+    $('#selectT2').select2({ dropdownParent: $("#mab"), width: '100%'});
+    $('#selectCliente2').select2({
+        placeholder: '----',
+        dropdownParent: $("#mab"),
+        width: '100%',
+        ajax: {
+            url: '{{ route('cliente.buscar')}}',
+            dataType: 'json',
+            data: function (term, page) {
+                var query = {
+                    sh: term.term
+                }
+                return query;
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: $.map(data, function (dataItem) {
+                        return { id: dataItem.id, text: dataItem.nombre, orginal: dataItem }
+                    }),
+                    pagination: {
+                        more: false
+                    }
+                };
+            }
+        }
+    });
+
     $('#selectCliente').on("select2:selecting", function(e) {
         var op = e.params.args.data.orginal;
         $.ajax({
@@ -153,11 +241,14 @@ $(function() {
                 var s = $('<select id="selectT" class="form-control"/>');
                 s.append($('<option selected="selected" value/>').html('----'));
                 for (var i in response) {
-                    s.append($('<option value="'+response[i].pivot.id+'"/>').html(response[i].nombre + ' ' + response[i].updated_at.split(' ')[0]));
+                    s.append($('<option value="'+response[i].pivot.id+'"/>').html(response[i].nombre + ' ' + response[i].pivot.updated_at.split(' ')[0]));
                 }
                 $('#selectT').remove();
                 $('#select-tratamientos').append(s);
                 $('#selectT').select2({ dropdownParent: $("#mcr"), width: '100%'});
+                $('#selectT').on("select2:selecting", function (e) {
+                    sucursaltratamiento($('#sucursal_id').val(), e.params.args.data.id);
+                });
                 $('#selectT').change(function() {
                     $('#extra').html('<input type="hidden" name="cliente_tratamiento_id" value="'+$(this).val()+'"/>');
                 })
@@ -168,19 +259,10 @@ $(function() {
         });
     });
 
-    $('#autocomplete2').autocomplete({
-        serviceUrl: '{{ route('cliente.buscar')}}',
-        paramName: 'sh',
-        transformResult: function(response) {
-           return {
-               suggestions: $.map(JSON.parse(response), function(dataItem) {
-                   return { value: dataItem.nombre, data: dataItem };
-               })
-           };
-       },
-        onSelect: function (suggestion) {
+    $('#selectCliente2').on("select2:selecting", function(e) {
+            var op = e.params.args.data.orginal;
             $.ajax({
-                url: '{{ route('cliente.saldo', ['id' => ':id']) }}'.replace(':id', suggestion.data.id),
+                url: '{{ route('cliente.saldo', ['id' => ':id']) }}'.replace(':id', op.id),
                 type: 'GET',
                 success: function(response, status, jqXHR) {
                     $('#info2').html(`
@@ -197,16 +279,17 @@ $(function() {
                 }
             });
             $.ajax({
-                url: '{{ route('cliente.tratamientos', ['id' => ':id']) }}'.replace(':id', suggestion.data.id ),
+                url: '{{ route('cliente.tratamientos', ['id' => ':id']) }}'.replace(':id', op.id ),
                 type: 'GET',
                 success: function(response, status, jqXHR) {
                     var s = $('<select id="selectT2" class="form-control"/>');
                     s.append($('<option selected="selected" value/>').html('----'));
                     for (var i in response) {
-                        s.append($('<option value="'+response[i].pivot.id+'"/>').html(response[i].nombre + ' ' + response[i].updated_at.split(' ')[0]));
+                        s.append($('<option value="'+response[i].pivot.id+'"/>').html(response[i].nombre + ' ' + response[i].pivot.updated_at.split(' ')[0]));
                     }
                     $('#selectT2').remove();
                     $('#select-tratamientos2').append(s);
+                    $('#selectT2').select2({ dropdownParent: $("#mab"), width: '100%'});
                     $('#selectT2').change(function() {
                         $('#extra2').html('<input type="hidden" name="cliente_tratamiento_id" value="'+$(this).val()+'"/>');
                         $('#fab').attr('action', $('#fab').attr('action').replace(':id', $(this).val()));
@@ -218,7 +301,7 @@ $(function() {
                 }
             });
         }
-    });
+    );
 
 
     clienteTable(

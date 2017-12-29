@@ -50,17 +50,19 @@ $(document).ready(function() {
 });
 
 function initdatepicker() {
-    $('#datetimepicker1').datetimepicker({
+    $('#datetimepicker1').datepicker({
         format: 'yyyy-mm-dd',
         language:  'es',
-        minView: 2,
-        autoclose: 1,
+        autoclose: true,
     });
-    $('#datetimepicker2').datetimepicker({
-        format:'yyyy-mm-dd hh:ii',
+    $('#datetimepicker2').datepicker({
+        startDate: new Date(),
+        format:'yyyy-mm-dd',
         language:  'es',
-        daysOfWeekDisabled: '0',
-        autoclose: 1,
+        autoclose: true,
+        beforeShowDay: function (date){
+            return false;
+        }
     });
 }
 
@@ -167,34 +169,56 @@ function calendario() {
                 <span><b>Correo electrónico:</b> ${calEvent.cliente.email}</span><br>
                 <span><b>Telefono:</b> ${calEvent.cliente.telefono}</span><br>
                 <span><b>DNI:</b> ${calEvent.cliente.identificacion}</span><br>
-                <span><b>Localidad:</b> ${calEvent.cliente.localidad}</span><br>
-                <span><b>Ocupación:</b> ${calEvent.cliente.ocupacion}</span><br>`);
+                <br><span><b>Tratamiento Reservado:</b> ${calEvent.tratamiento_nombre}</span><br>`);
             $('#mer').modal('show');
             $('#mer').on('hidden.bs.modal', function (e) {
                 $('#fer')[0].reset();
                 $('#fer').attr('action', $('#fer').attr('action').replace(calEvent.id, ':id'))
             });
-            $('#datetimepicker5').datetimepicker({
-                format:'YYYY-MM-DD HH:mm',
-                icons: {
-                    time: "fa fa-clock-o",
-                    date: "fa fa-calendar",
-                    up: "fa fa-arrow-up",
-                    down: "fa fa-arrow-down"
-                }
-            });
-            $('#datetimepicker6').datetimepicker({
-                format:'YYYY-MM-DD HH:mm',
-                icons: {
-                    time: "fa fa-clock-o",
-                    date: "fa fa-calendar",
-                    up: "fa fa-arrow-up",
-                    down: "fa fa-arrow-down"
-                }
-            });
+            if(!calEvent.rotativo){
+                $('#datetimepicker5').datepicker('destroy')
+                $('#datetimepicker5').datepicker({
+                    startDate: new Date(),
+                    format:'yyyy-mm-dd',
+                    language:  'es',
+                    autoclose: true,
+                });
+                $('#datetimepicker7').datepicker('remove')
+                $('#datetimepicker7').datetimepicker({
+                    startView: 1,
+                    format:'hh:ii',
+                    language:  'es',
+                    autoclose: true
+                });
+            }else{
+                $('#datetimepicker5').datepicker('destroy')
+                $('#datetimepicker5').datepicker({
+                    startDate: new Date(),
+                    format:'yyyy-mm-dd',
+                    language:  'es',
+                    autoclose: true,
+                    beforeShowDay: function (date) {
+                        var year = date.getFullYear();
+                        var mes = (date.getMonth() + 1);
+                        var month = (mes<9? '0'+mes: mes);
+                        var date = (date.getDate()<9? '0'+date.getDate(): date.getDate());
+                        var allDates =  year + '-' + month + '-' + date;
+                        console.log(allDates);
+                        return (calEvent.valid_days.indexOf(allDates) != -1?true:false);
+                    }
+                });
+                $('#datetimepicker7').datepicker('remove')
+                $('#datetimepicker7').datetimepicker({
+                    startView: 1,
+                    format:'hh:ii',
+                    language:  'es',
+                    autoclose: true
+                });
+            }
             $('#fer').attr('action', $('#fer').attr('action').replace(':id', calEvent.id));
-            $('#fer').find('#start').val(calEvent.start._i);
-            $('#fer').find('#end').val(calEvent.end._i);
+            $('#fer').find('#datetimepicker5').val(calEvent.start._i.split(' ')[0]);
+            $('#fer').find('#datetimepicker7').val(calEvent.start._i.split(' ')[1]);
+            $('#fer').find('#datetimepicker6').val(calEvent.end._i);
             $('#fer').find('#sucursal_id').val(calEvent.sucursal_id);
             $('#fer').find('#user_id').val(calEvent.user_id);
             $('#fer').find('#estado').val(calEvent.estado);
@@ -297,6 +321,11 @@ function calendario() {
 
     $('#acc').click(function() {
         $("#mcc").modal('show');
+        $('#mcc').on('hidden.bs.modal', function (e) {
+            $('#fcc')[0].reset();
+            $('#fcc').find('#datetimepicker1').val('');
+
+        });
     });
 
     $('#aat').click(function() {
@@ -306,10 +335,19 @@ function calendario() {
 
     $('#acr').click(function() {
         $("#mcr").modal('show');
+        $('#mcr').on('hidden.bs.modal', function (e) {
+            $('#fcr')[0].reset();
+            $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
+            $('#startBlock').text('');
+        });
     });
 
     $('#aab').click(function() {
         $("#mab").modal('show');
+        $('#mab').on('hidden.bs.modal', function (e) {
+            $('#fab')[0].reset();
+            $('#selectCliente2, #selectT2').select2('val', -1);
+        });
     });
 
     $('#sucursal-filter').change(function() {
@@ -361,10 +399,10 @@ function afcr2(){
     if($("#fcr")[0].checkValidity()) {
         $('#fcr').ajaxSubmit({
             success: function () {
-                // $("#mcr").modal('hide');
-                $('#fcr').find('#sucursal_id').prop('selectedIndex', 0);
-                $('#fcr').find('#start').val('');
-                $('#fcr').find('#end').val('');
+                $('#fcr').find('#sucursal_id').select2('val', -1);
+                $('#fcr').find('#datetimepicker2').val('');
+                $('#fcr').find('#valor').val('');
+                $('#fcr #startBlock').text('');
                 $("#calendar").fullCalendar('refetchEvents');
             },
             error: function () {
@@ -438,7 +476,6 @@ function asignar(cliente_id, name, urlD){
 }
 
 function clienteTable(lan, url, fnSelect, fnBtn) {
-    console.log('ok');
     $('#datatable-clientes').DataTable({
         processing: true,
         serverSide: true,

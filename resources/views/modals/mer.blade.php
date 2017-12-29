@@ -2,7 +2,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Crear Reserva</h5>
+        <h5 class="modal-title">Editar Reserva</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -10,22 +10,39 @@
       <div class="modal-body">
           <div id="cinfo"></div><br>
           {!! Form::open(['route' => ['reserva.update', ':id'], 'method' => 'PUT', 'id'=>'fer']) !!}
-              <div class="form-group">
-                  {!! Form::label('start', 'Hora de inico') !!}
-                  <div class="input-group date" id="datetimepicker5" data-target-input="nearest">
-                      <span class="input-group-addon" data-target="#datetimepicker5" data-toggle="datetimepicker">
-                          <span class="fa fa-calendar"></span>
-                      </span>
-                      {!! Form::text('start', null,['class' => 'form-control  datetimepicker-input', 'required' , 'data-target' => '#datetimepicker5']) !!}
+              <div class="row">
+                  <div class="col-lg-8">
+                      <div class="form-group">
+                          {!! Form::label('datetimepicker5', 'Fecha') !!}
+                          <div class="input-group">
+                              <span class="input-group-addon">
+                                  <span class="fa fa-calendar"></span>
+                              </span>
+                              {!! Form::text('start1', null,['class' => 'form-control', 'required', 'readonly', 'size' =>'16', 'id' => 'datetimepicker5']) !!}
+                          </div>
+                          <small id="startBlock" class="form-text text-muted"></small>
+                      </div>
+                  </div>
+                  <div class="col-lg-4">
+                      <div class="form-group">
+                          {!! Form::label('datetimepicker7', 'Hora de inico') !!}
+                          <div class="input-group">
+                              <span class="input-group-addon">
+                                  <span class="fa fa-clock-o"></span>
+                              </span>
+                              {!! Form::text('start2', null,['class' => 'form-control', 'required', 'readonly', 'size' =>'16', 'id' => 'datetimepicker7']) !!}
+                          </div>
+                          <small id="startBlock" class="form-text text-muted"></small>
+                      </div>
                   </div>
               </div>
               <div class="form-group">
-                  {!! Form::label('end', 'Hora de finalización') !!}
-                  <div class="input-group date" id="datetimepicker6" >
-                      <span class="input-group-addon" data-target="#datetimepicker6">
+                  {!! Form::label('datetimepicker6', 'Fecha y  Hora de finalización') !!}
+                  <div class="input-group">
+                      <span class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </span>
-                      {!! Form::text(null, null,['id' => 'end' ,'class' => 'form-control', 'required', 'disabled' , 'data-target' => '#datetimepicker6']) !!}
+                      {!! Form::text(null, null,['class' => 'form-control', 'disabled', 'size' =>'16', 'id' => 'datetimepicker6']) !!}
                   </div>
               </div>
               <div class="form-group">
@@ -33,7 +50,7 @@
                   {!! Form::select('sucursal_id', $sucursales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
               </div>
               <div class="form-group">
-                  {!! Form::label('user_id', 'Profesional') !!}
+                  {!! Form::label('user_id', 'Vendedor') !!}
                   {!! Form::select('user_id', $profesionales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
               </div>
               <div class="form-group">

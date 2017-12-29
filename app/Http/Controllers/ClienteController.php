@@ -51,7 +51,7 @@ class ClienteController extends Controller
     public function store(Request $request)
     {
         $cliente = new Cliente($request->all());
-        $cliente->fecha_nacimiento = new DateTime($request->fecha_nacimiento);
+        $cliente->fecha_nacimiento = new DateTime($request->facha_nacimiento);
         $cliente->save();
         flash('Cliente '. $cliente->nombre .' guardado con exito.')->success();
         if(!$request->noreload){
@@ -95,7 +95,7 @@ class ClienteController extends Controller
         $cliente->identificacion = $request->identificacion;
         $cliente->email = $request->email;
         // $cliente->localidad = $request->localidad;
-        $cliente->fecha_nacimiento = new DateTime($request->fecha_nacimiento);
+        $cliente->fecha_nacimiento = new DateTime($request->facha_nacimiento);
         // $cliente->ocupacion = $request->ocupacion;
         $cliente->save();
         flash('Cliente '. $cliente->nombre .' guardado con exito.')->success();
@@ -110,7 +110,8 @@ class ClienteController extends Controller
      */
     public function destroy($id)
     {
-        Cliente::find($id)->delete();
+        $cliente = Cliente::find($id);
+        $cliente->delete();
         flash('Cliente  borrado con exito.')->success();
         return redirect()->route('cliente.index');
     }

@@ -12,15 +12,12 @@ class Rotativo extends Model {
         'id',
         'sucursal_id',
         'tratamiento_id',
-        'profesional',
-        'lunes',
-        'martes',
-        'miercoles',
-        'jueves',
-        'viernes',
-        'sabado',
-        'domingo'
+        'profesional'
     ];
+
+    public function fechas(){
+        return $this->hasMany('App\Fecha');
+    }
 
     public function sucursal(){
         return $this->belongsTo('App\Sucursal');

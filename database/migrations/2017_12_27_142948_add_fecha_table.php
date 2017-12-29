@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCamposToRotativoTable extends Migration
+class AddFechaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AddCamposToRotativoTable extends Migration
      */
     public function up()
     {
-        Schema::table('rotativo', function (Blueprint $table) {
+        Schema::create('fecha', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('rotativo_id')->unsigned();
+            $table->date('fecha');
             $table->timestamps();
+            $table->foreign('rotativo_id')->references('id')->on('rota')->onDelete('cascade');
         });
     }
 
@@ -25,6 +29,6 @@ class AddCamposToRotativoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rotativo');
+        Schema::dropIfExists('fecha');
     }
 }
