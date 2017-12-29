@@ -72,7 +72,7 @@ class ReservaController extends Controller
         $tratamiento = Tratamiento::find($cliente_tratamiento->tratamiento_id);
         if($tratamiento->rotativo){
             $rotativos = Rotativo::where([
-                ['tratamiento_id', '=', $tratamiento_id],
+                ['tratamiento_id', '=', $tratamiento->id],
                 ['sucursal_id', '=', $sucursal_id]
             ])->get();
             if(count($rotativos) > 0){

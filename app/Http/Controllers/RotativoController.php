@@ -174,7 +174,6 @@ class RotativoController extends Controller
                 ['tratamiento_id', '=', $tratamiento->id],
                 ['sucursal_id', '=', $sucursal_id]
             ])->get();
-            dd($rotativo);
             if(count($rotativos) > 0){
                 $days = [];
                 foreach ($rotativos as $rotativo) {
