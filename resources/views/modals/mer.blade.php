@@ -63,6 +63,8 @@
           {!! Form::close() !!}
       </div>
       <div class="modal-footer">
+          <a id="sr" class="btn btn-primary" style="color: white">Seguir Reservando</a>
+          <a id="ap" class="btn btn-primary" style="color: white">Asentar pago</a>
           <a class="btn btn-primary" style="color: white" onclick="afer();">Guardar</a>
           <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
       </div>

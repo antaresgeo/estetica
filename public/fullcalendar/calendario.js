@@ -162,7 +162,6 @@ function calendario() {
         eventLimit: true, // allow "more" link when too many events
         slotDuration: '00:15:00',
         eventClick: function(calEvent, jsEvent, view) {
-            console.log(calEvent);
             $('#cinfo').empty();
             $('#cinfo').html(`
                 <h6>Cliente</h6>
@@ -208,7 +207,6 @@ function calendario() {
                         var month = (mes<9? '0'+mes: mes);
                         var date = (date.getDate()<9? '0'+date.getDate(): date.getDate());
                         var allDates =  year + '-' + month + '-' + date;
-                        console.log(allDates);
                         return (calEvent.valid_days.indexOf(allDates) != -1?true:false);
                     }
                 });
@@ -222,12 +220,56 @@ function calendario() {
             }
             $('#fer').attr('action', $('#fer').attr('action').replace(':id', calEvent.id));
             $('#fer').find('#datetimepicker5').val(calEvent.start._i.split(' ')[0]);
-            $('#fer').find('#datetimepicker7').val(calEvent.start._i.split(' ')[1]);
+            $('#datetimepicker5').datepicker('update');
+            $('#fer').find('#datetimepicker7').val(calEvent.start._i.split(' ')[1].split(':00')[0]);
+            $('#datetimepicker7').datetimepicker('update');
             $('#fer').find('#datetimepicker6').val(calEvent.end._i);
             $('#fer').find('#sucursal_id').val(calEvent.sucursal_id);
             $('#fer').find('#user_id').val(calEvent.user_id);
             $('#fer').find('#estado').val(calEvent.estado);
             $('#fer').find('#cliente_tratamiento_id').val(calEvent.cliente_tratamiento_id);
+            $('#mer #sr').on('click', function(event) {
+                $('#mcr #selectCliente').empty();
+                var optioncliente = $('<option selected>'+calEvent.cliente.nombre+'</option>').val(calEvent.cliente_id);
+                $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {id:calEvent.cliente_id});
+                document.fn_on_cliente_change = function () {
+                    $('#mer #ap').off('click');
+                    $('#mer #sr').off('click');
+                    $('#mcr #selectT').val(calEvent.cliente_tratamiento_id).trigger('change');
+                    $('#mcr #selectT').trigger('select2:selecting', { id: calEvent.cliente_tratamiento_id});
+                    $('#mcr #sucursal_id').val(calEvent.sucursal_id).trigger('change');
+                    $('#mcr #user_id').val(calEvent.user_id).trigger('change');
+                    $('#mcr #sucursal_id').trigger('select2:selecting', { id: calEvent.sucursal_id});
+                }
+                $('#mer').modal('hide');
+                $('#mcr').modal('show');
+                $('#mcr').on('hidden.bs.modal', function (e) {
+                    $('#fcr')[0].reset();
+                    $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
+                    $('#startBlock').text('');
+                    $('#info').empty();
+                    $('#infot').empty();
+                });
+            });
+            $('#mer #ap').on('click', function(event) {
+                $('#mab #selectCliente2').empty();
+                var optioncliente = $('<option selected>'+calEvent.cliente.nombre+'</option>').val(calEvent.cliente_id);
+                $('#mab #selectCliente2').append(optioncliente).trigger('select2:selecting', {id:calEvent.cliente_id});
+                document.fn_on_cliente_change = function () {
+                    $('#mer #ap').off('click');
+                    $('#mer #sr').off('click');
+                    $('#mab #selectT2').val(calEvent.cliente_tratamiento_id).trigger('change');
+                    $('#mab #selectT2').trigger('select2:selecting', { id: calEvent.cliente_tratamiento_id});
+                }
+                $('#mer').modal('hide');
+                $('#mab').modal('show');
+                $('#mab').on('hidden.bs.modal', function (e) {
+                    $('#fab')[0].reset();
+                    $('#selectCliente2, #selectT2').select2('val', -1);
+                    $('#info2').empty();
+                    $('#info2t').empty();
+                });
+            });
         },
          eventDrop: function(event, delta, revertFunc) {
             if (!confirm("Esta seguro que quiere realizar este cambio?")) {
@@ -298,7 +340,6 @@ function calendario() {
                             even.color = '#00796B';
                         }
                         if(even.estado === 'cancelada'){
-                            console.log('can');
                             even.color = '#455A64';
                         }
                     }
@@ -489,7 +530,6 @@ function afab(){
 
 function attor(data){
     if(data){
-        console.log(data);
         $('#mcr #selectCliente').empty();
         var optioncliente = $('<option selected>'+data.response.nombre+'</option>').val(data.response.id);
         $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {id:data.response.id});

@@ -88,7 +88,6 @@
 @push('scripts')
 <script>
 $(function() {
-    console.log('select 1');
     $('#selectT').select2({ dropdownParent: $("#mcr"), width: '100%'});
     $('#selectT').on("select2:selecting", function (e,d) {
         var op = (e.params? e.params.args.data: d);
@@ -123,7 +122,6 @@ $(function() {
     // var tratamiento_id = $('#selectT').val();
 
     function sucursaltratamiento(sucursal_id, tratamiento_id) {
-        console.log('sucursaltratamiento', sucursal_id, tratamiento_id);
         if(sucursal_id && tratamiento_id){
             $.ajax({
                 url: '{{ route('rotativo.valid', ['sucursal' => ':sucursal', 'tratamiento' => ':tratamiento']) }}'
@@ -250,7 +248,6 @@ $(function() {
     });
 
     $('#selectCliente').on("select2:selecting", function(e,d) {
-        console.log('event', e);
         var op = (e.params? e.params.args.data.orginal: d);
         $.ajax({
             url: '{{ route('cliente.saldo', ['id' => ':id']) }}'.replace(':id', op.id),
@@ -275,7 +272,6 @@ $(function() {
             url: '{{ route('cliente.tratamientos', ['id' => ':id']) }}'.replace(':id', op.id ),
             type: 'GET',
             success: function(response, status, jqXHR) {
-                console.log('success');
                 var s = $('<select id="selectT" class="form-control"/>');
                 s.append($('<option selected="selected" value/>').html('----'));
                 for (var i in response) {
@@ -287,9 +283,7 @@ $(function() {
                 $('#selectT').remove();
                 $('#select-tratamientos').append(s);
                 $('#selectT').select2({ dropdownParent: $("#mcr"), width: '100%'});
-                console.log('seletT declare');
                 $('#selectT').on("select2:selecting", function (e,d) {
-                    console.log('select a');
                     var op = (e.params? e.params.args.data: d);
                     sucursaltratamiento(parseInt($('#sucursal_id').val()), op.id);
                     $.ajax({
@@ -325,8 +319,8 @@ $(function() {
         });
     });
 
-    $('#selectCliente2').on("select2:selecting", function(e) {
-            var op = e.params.args.data.orginal;
+    $('#selectCliente2').on("select2:selecting", function(e,d) {
+            var op = (e.params? e.params.args.data.orginal: d);
             $.ajax({
                 url: '{{ route('cliente.saldo', ['id' => ':id']) }}'.replace(':id', op.id),
                 type: 'GET',
@@ -381,8 +375,11 @@ $(function() {
                     $('#selectT2').change(function() {
                         $('#extra2').html('<input type="hidden" name="cliente_tratamiento_id" value="'+$(this).val()+'"/>');
                         $('#fab').attr('action', $('#fab').attr('action').replace(':id', $(this).val()));
-
-                    })
+                    });
+                    if(document.fn_on_cliente_change){
+                        document.fn_on_cliente_change();
+                        document.fn_on_cliente_change = undefined;
+                    }
                 },
                 error: function(response, status, errorThrown) {
                     console.log(response);
