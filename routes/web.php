@@ -99,3 +99,7 @@ Route::get('/rotativo/{sucursal}/{tratamiento}', [
     'uses' => 'RotativoController@valid',
     'as' => 'rotativo.valid'
 ]);
+Route::get('/tratamiento/{id}/saldo', [
+    'uses' => 'TratamientoController@saldo',
+    'as' => 'tratamiento.saldo'
+]);

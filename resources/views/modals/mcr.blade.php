@@ -11,19 +11,22 @@
           <div class="form-group">
                {!! Form::label('selectCliente', 'Cliente') !!}
                <select id="selectCliente" class="form-control"></select>
+               <small id="info" class="form-text text-muted"></small>
           </div>
-          <div class="form-group" id="select-tratamientos">
+          <div class="form-group" >
               {!! Form::label('selectT', 'Tratamiento/s') !!}
-              <select id="selectT" class="form-control">
-                  <option selected="selected" value="">----</option>
-              </select>
+              <div id="select-tratamientos">
+                  <select id="selectT" class="form-control">
+                      <option selected="selected" value="">----</option>
+                  </select>
+              </div>
+              <small id="infot" class="form-text text-muted"></small>
           </div>
-          <div id="info"></div>
+
           {!! Form::open(['route' => 'reserva.store', 'method' => 'POST', 'id'=>'fcr']) !!}
               <div class="form-group">
                   {!! Form::label('sucursal_id', 'Sucursal') !!}
                   {!! Form::select('sucursal_id', $sucursales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
-
               </div>
               <div class="row">
                   <div class="col-lg-8">
@@ -53,17 +56,21 @@
               </div>
               <div class="form-group">
                   {!! Form::label('user_id', 'Vendedor') !!}
-                  {!! Form::select('user_id', $profesionales, null, ['class' => 'form-control', 'placeholder' => '----' ]) !!}
+                  {!! Form::select('user_id', $profesionales, null, ['class' => 'form-control', 'required','placeholder' => '----' ]) !!}
               </div>
               <div class="form-group">
                   {!! Form::label('valor', 'Monto') !!}
                   {!! Form::number('valor', null,['class' => 'form-control', 'placeholder' => 'Monto', 'min'=> 0]) !!}
               </div>
+              <div class="form-group">
+                  {!! Form::label('is_anticipo', 'Anticipo') !!}
+                  {!! Form::checkbox('is_anticipo', 'yes', null) !!}
+              </div>
               <div id="extra"></div>
           {!! Form::close() !!}
       </div>
       <div class="modal-footer">
-          <a class="btn btn-primary" style="color: white" onclick="afcr2();">Guardar y Seguir Reservando</a>
+          <a class="btn btn-primary" style="color: white" onclick="afcr2('{{ route('cliente.saldo', ['id' => ':id']) }}', '{{ route('tratamiento.saldo', ['id' => ':id']) }}');">Guardar y Seguir Reservando</a>
           <a class="btn btn-primary" style="color: white" onclick="afcr();">Guardar y Salir</a>
           <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Salir</button>
       </div>

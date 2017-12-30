@@ -17,7 +17,7 @@ class AddClienteTable extends Migration
             $table->increments('id');
             $table->string('nombre');
             $table->string('telefono');
-            $table->string('identificacion');
+            $table->string('identificacion')->nullable();
             $table->timestamps();
         });
     }

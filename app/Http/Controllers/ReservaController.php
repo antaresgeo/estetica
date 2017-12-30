@@ -53,6 +53,7 @@ class ReservaController extends Controller
             $reserva->cliente = $c;
             $reserva->tratamiento_id = $ct->tratamiento_id;
             $reserva->tratamiento_nombre = $t->nombre;
+            $reserva->cliente_tratamiento = $ct;
             $reserva->title = ''.$t->nombre.'
             '.$c->nombre.' - '.$c->telefono.'
             Pago:'.$ct->abonado.' Impago:'.$ct->saldo.' Total:'.$ct->precio;
@@ -126,13 +127,13 @@ class ReservaController extends Controller
     {
         $ct = ClienteTratamiento::find($request->cliente_tratamiento_id);
         $tt = Tratamiento::find($ct->tratamiento_id);
-        if($ct->saldo === 0){
-            return response('El valor del tratamiento ya ha sido cancelado.', 400);
-        }
-        if($request->valor > $ct->saldo ){
-            return response('El valor a abonar es mayor que el del tratamiento ('.$ct->saldo.')', 400);
-        }
-        if($ct->abonado <= $ct->saldo){
+        if($request->valor){
+            if($ct->saldo == 0){
+                return response('El valor del tratamiento ya ha sido cancelado.', 400);
+            }
+            if($request->valor > $ct->saldo ){
+                return response('El valor a abonar es mayor que el del tratamiento ('.$ct->saldo.')', 400);
+            }
             $ct->abonado = $ct->abonado + $request->valor;
             $ct->saldo = $ct->saldo - $request->valor;
         }
@@ -143,7 +144,9 @@ class ReservaController extends Controller
         $reserva->end = $end->add(new DateInterval('PT' . $tt->duracion . 'M'));
         $reserva->cliente_tratamiento_id = $request->cliente_tratamiento_id;
         $reserva->save();
-        $ct->save();
+        if($request->valor){
+            $ct->save();
+        }
     }
 
     /**

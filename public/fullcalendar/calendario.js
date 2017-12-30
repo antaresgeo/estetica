@@ -162,6 +162,7 @@ function calendario() {
         eventLimit: true, // allow "more" link when too many events
         slotDuration: '00:15:00',
         eventClick: function(calEvent, jsEvent, view) {
+            console.log(calEvent);
             $('#cinfo').empty();
             $('#cinfo').html(`
                 <h6>Cliente</h6>
@@ -169,6 +170,10 @@ function calendario() {
                 <span><b>Correo electrónico:</b> ${calEvent.cliente.email}</span><br>
                 <span><b>Telefono:</b> ${calEvent.cliente.telefono}</span><br>
                 <span><b>DNI:</b> ${calEvent.cliente.identificacion}</span><br>
+                <span><b>Valor Tratamiento:</b> ${calEvent.cliente_tratamiento.precio}</span><br>
+                <span><b>Total Abonado:</b> ${calEvent.cliente_tratamiento.abonado}</span><br>
+                <span><b>Total Saldo:</b> ${calEvent.cliente_tratamiento.saldo}</span><br>
+                <span><b>Anticipo:</b> ${calEvent.cliente_tratamiento.anticipo}</span><br>
                 <br><span><b>Tratamiento Reservado:</b> ${calEvent.tratamiento_nombre}</span><br>`);
             $('#mer').modal('show');
             $('#mer').on('hidden.bs.modal', function (e) {
@@ -330,15 +335,19 @@ function calendario() {
 
     $('#aat').click(function() {
         $('#datatable-clientes').DataTable().ajax.reload();
+        $("#mat #btn_cr").addClass('disabled').off('click');
         $("#mat").modal('show');
     });
 
     $('#acr').click(function() {
+        $('#mcr #sucursal_id').val($('#sucursal-filter').val()).trigger('change');
         $("#mcr").modal('show');
         $('#mcr').on('hidden.bs.modal', function (e) {
             $('#fcr')[0].reset();
             $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
             $('#startBlock').text('');
+            $('#info').empty();
+            $('#infot').empty();
         });
     });
 
@@ -362,9 +371,10 @@ function afcc(close){
     if($("#fcc")[0].checkValidity()) {
         $('#fcc').ajaxSubmit({
             success: function () {
-                $('#datatable-clientes').DataTable().ajax.reload();
+                $('#datatable-clientes').DataTable().search($('#fcc #nombre').val()).draw();
                 $("#mcc").modal('hide');
                 if(!close){
+                    $("#mat #btn_cr").addClass('disabled').on('click',function () {});
                     $("#mat").modal('show');
                 }
                 $("#fcc")[0].reset();
@@ -395,18 +405,47 @@ function afcr(){
     }
 }
 
-function afcr2(){
+function afcr2(url, url2){
     if($("#fcr")[0].checkValidity()) {
         $('#fcr').ajaxSubmit({
             success: function () {
-                $('#fcr').find('#sucursal_id').select2('val', -1);
+                $.ajax({
+                    url: url.replace(':id', $('#selectCliente').val()),
+                    type: 'GET',
+                    success: function(response, status, jqXHR) {
+                        $('#info').html(`
+                            <span><b>Total aquirido:</b> ${response.precio}</span><br>
+                            <span><b>Total Abonado:</b> ${response.abonado}</span><br>
+                            <span><b>Saldo Total:</b> ${response.saldo}</span><br>`);
+                    },
+                    error: function(response, status, errorThrown) {
+                        console.log(response);
+                    }
+                });
+                $.ajax({
+                    url:  url2.replace(':id', $('#selectT').val()),
+                    type: 'GET',
+                    success: function(response, status, jqXHR) {
+                        $('#infot').html(`
+                            <span><b>Total tratamiento:</b> ${response.precio}</span><br>
+                            <span><b>Total Abonado:</b> ${response.abonado}</span><br>
+                            <span><b>Saldo Total:</b> ${response.saldo}</span><br>`);
+                    },
+                    error: function(response, status, errorThrown) {
+                        console.log(response);
+                    }
+                });
+                // $('#fcr').find('#sucursal_id').select2('val', -1);
                 $('#fcr').find('#datetimepicker2').val('');
                 $('#fcr').find('#valor').val('');
                 $('#fcr #startBlock').text('');
                 $("#calendar").fullCalendar('refetchEvents');
             },
-            error: function () {
-                console.log('error');
+            error: function (e) {
+                if(e.status === 400){
+                    alert(e.responseText);
+                }
+                console.log('error',e);
             }
         });
     }else {
@@ -448,15 +487,36 @@ function afab(){
     }
 }
 
-function attor(){
+function attor(data){
+    if(data){
+        console.log(data);
+        $('#mcr #selectCliente').empty();
+        var optioncliente = $('<option selected>'+data.response.nombre+'</option>').val(data.response.id);
+        $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {id:data.response.id});
+        document.fn_on_cliente_change = function () {
+            var sucursal = parseInt($('#sucursal-filter').val());
+            $('#mcr #selectT').select2().val(data.response.pivot.id).trigger('change');
+            $('#mcr #selectT').trigger('select2:selecting', { id: data.response.pivot.id});
+            $('#mcr #sucursal_id').val(sucursal).trigger('change');
+            $('#mcr #sucursal_id').trigger('select2:selecting', { id: sucursal});
+        }
+    }
     $('#mat').modal('hide');
     $('#mcr').modal('show');
+    $('#mcr').on('hidden.bs.modal', function (e) {
+        $('#fcr')[0].reset();
+        $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
+        $('#startBlock').text('');
+        $('#info').empty();
+        $('#infot').empty();
+    });
 }
 
-function asignar(cliente_id, name, urlD){
-    var tratamiento_id = $('#tratamiento-filter-'+cliente_id).val();
-    if(tratamiento_id != ''){
-        if(confirm('Esta seguro de asignar el tratamiento '+$('#tratamiento-filter-'+cliente_id+' option:selected').text()+' al cliente '+name)){
+function asignar(cliente_id, cliente_name, urlD){
+    var tratamiento_id = parseInt($('#tratamiento-filter-'+cliente_id).val());
+    var tratamiento_name = $('#tratamiento-filter-'+cliente_id+' option:selected').text();
+    if(tratamiento_name != '----'){
+        if(confirm('Esta seguro de asignar el tratamiento '+tratamiento_name+' al cliente '+cliente_name)){
             $.ajax({
                 url: urlD,
                 type: 'GET',
@@ -464,8 +524,12 @@ function asignar(cliente_id, name, urlD){
                     c: cliente_id,
                     t: tratamiento_id
                 },
+
                 success: function(response, status, jqXHR) {
                     alert('Tratamiento asignado')
+                    $('#mat #btn_cr').removeClass('disabled').on('click', function() {
+                        attor({tratamiento_name, response});
+                    })
                 },
                 error: function(response, status, errorThrown) {
                     console.log(response);

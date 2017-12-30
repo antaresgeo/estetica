@@ -25,7 +25,7 @@
           </div>
       </div>
       <div class="modal-footer">
-          <a class="btn btn-primary" style="color: white" onclick="attor();">Crear Reserva</a>
+          <a id="btn_cr"class="btn btn-primary disabled" style="color: white">Crear Reserva</a>
           <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">Salir</button>
       </div>
     </div>

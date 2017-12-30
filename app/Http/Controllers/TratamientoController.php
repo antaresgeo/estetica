@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Tratamiento;
+use App\ClienteTratamiento;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -111,5 +112,11 @@ class TratamientoController extends Controller
      public function anyData()
      {
          return Datatables::of(Tratamiento::query())->make(true);
+     }
+
+     public function saldo($cliente_tratamiento_id)
+     {
+         $ct = ClienteTratamiento::find($cliente_tratamiento_id);
+         return [ 'saldo' => $ct->saldo, 'abonado' => $ct->abonado, 'precio' => $ct->precio ];
      }
 }

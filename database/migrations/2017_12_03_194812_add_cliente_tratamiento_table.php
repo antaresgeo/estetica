@@ -21,6 +21,7 @@ class AddClienteTratamientoTable extends Migration
             $table->float('precio')->nullable($value = true);
             $table->float('abonado')->nullable($value = true);
             $table->float('saldo')->nullable($value = true);
+            $table->float('anticipo')->nullable($value = true);
             $table->timestamps();
 
             $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('cascade');;

@@ -130,7 +130,13 @@ class ClienteController extends Controller
             'abonado' => 0,
             'saldo' => $t->precio
         ]);
-        flash('Tratamiento asignado')->success();
+        // flash('Tratamiento asignado')->success();
+        $res = $t->clientes()
+            ->wherePivot('tratamiento_id', $t->id)
+            ->orderBy('pivot_created_at', 'desc')
+            ->first();
+        $res->pivot->tratamiento_rotativo = $t->rotativo;
+        return $res;
     }
 
     public function buscar(Request $r)
@@ -168,10 +174,8 @@ class ClienteController extends Controller
         if($r->valor > $ct->saldo ){
             return response('El valor a abonar es mayor que el del tratamiento ('.$ct->saldo.')', 400);
         }
-        if($ct->abonado <= $ct->saldo){
-            $ct->abonado = $ct->abonado + $r->valor;
-            $ct->saldo = $ct->saldo - $r->valor;
-        }
+        $ct->abonado = $ct->abonado + $r->valor;
+        $ct->saldo = $ct->saldo - $r->valor;
         $ct->save();
     }
 }
