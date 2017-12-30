@@ -167,7 +167,7 @@ class ClienteController extends Controller
 
     public function abonar(Request $r, $id)
     {
-        $ct = ClienteTratamiento::find($id);
+        $ct = ClienteTratamiento::find($r->cliente_tratamiento_id);
         if($ct->saldo === 0){
             return response('El valor del tratamiento ya ha sido cancelado.', 400);
         }
@@ -176,6 +176,9 @@ class ClienteController extends Controller
         }
         $ct->abonado = $ct->abonado + $r->valor;
         $ct->saldo = $ct->saldo - $r->valor;
+        if($request->has('is_anticipo')){
+            $ct->anticipo = $ct->abonado;
+        }
         $ct->save();
     }
 }

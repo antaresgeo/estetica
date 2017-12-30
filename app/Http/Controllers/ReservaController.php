@@ -136,6 +136,9 @@ class ReservaController extends Controller
             }
             $ct->abonado = $ct->abonado + $request->valor;
             $ct->saldo = $ct->saldo - $request->valor;
+            if($request->has('is_anticipo')){
+                $ct->anticipo = $ct->abonado;
+            }
         }
         $reserva = new Reserva($request->all());
         $date = $request->start1.' '.$request->start2;
