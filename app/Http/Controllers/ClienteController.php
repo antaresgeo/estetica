@@ -8,6 +8,7 @@ use App\ClienteTratamiento;
 use \DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
 class ClienteController extends Controller
@@ -180,5 +181,27 @@ class ClienteController extends Controller
             $ct->anticipo = $ct->abonado;
         }
         $ct->save();
+    }
+
+    function getRelationshipsData()
+    {
+        $ct = DB::table('cliente_tratamiento')
+            ->join('tratamiento', 'tratamiento.id', '=', 'cliente_tratamiento.tratamiento_id')
+            ->join('cliente', 'cliente.id', '=', 'cliente_tratamiento.cliente_id')
+            ->select(['cliente_tratamiento.*', 'cliente.nombre AS cliente_nombre', 'tratamiento.nombre AS tratamiento_nombre']);
+        return Datatables::of($ct)->make(true);
+    }
+
+    public function asignacion()
+    {
+        return view('asignaciones.list');
+    }
+
+    public function asignacion_destroy($id)
+    {
+        $ct = ClienteTratamiento::find($id);
+        $ct->delete();
+        flash('Asignacion  borrada con exito.')->success();
+        return redirect()->route('asignacion.index');
     }
 }

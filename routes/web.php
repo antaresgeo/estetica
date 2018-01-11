@@ -103,3 +103,15 @@ Route::get('/tratamiento/{id}/saldo', [
     'uses' => 'TratamientoController@saldo',
     'as' => 'tratamiento.saldo'
 ]);
+Route::get('/asignaciones', [
+    'uses' => 'ClienteController@getRelationshipsData',
+    'as' => 'asignacion.list'
+]);
+Route::get('/asignacion', [
+    'uses' => 'ClienteController@asignacion',
+    'as' => 'asignacion.index'
+]);
+Route::get('/asignacion/{id}/delete', [
+    'uses' => 'ClienteController@asignacion_destroy',
+    'as' => 'asignacion.destroy'
+]);
