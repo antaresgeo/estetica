@@ -120,7 +120,13 @@ $(function() {
 
     // var sucursal_id = ;
     // var tratamiento_id = $('#selectT').val();
-
+    function getValidDate(date) {
+        var year = date.getFullYear();
+        var mes = (date.getMonth() + 1);
+        var month = (mes<9? '0'+mes: mes);
+        var date = (date.getDate()<9? '0'+date.getDate(): date.getDate());
+        return year + '-' + month + '-' + date;
+    }
     function sucursaltratamiento(sucursal_id, tratamiento_id) {
         if(sucursal_id && tratamiento_id){
             $.ajax({
@@ -129,59 +135,62 @@ $(function() {
                     .replace(':tratamiento', tratamiento_id),
                 type: 'GET',
                 success: function(response, status, jqXHR) {
+                    var pdate = $('#datetimepicker2').datepicker('getDate');
+                    var hour = $('#datetimepicker3').val();
+                    if (pdate === null){
+                        pdate = new Date();
+                        hour = pdate.getHours()+':'+pdate.getMinutes();
+                    }
                     if(response.res){
+                        $('#startBlock').text('Las reservas de este tratamiento en esta sucursal tienen dias no disponibles, parareceran dectivados al tratar de selecionarlos');
                         $('#datetimepicker2').datepicker('destroy');
+                        $('#datetimepicker2').val('');
                         $('#datetimepicker2').datepicker({
-                            date: new Date(),
                             format:'yyyy-mm-dd',
                             language:  'es',
                             autoclose: true,
                             todayHighlight: true,
                             beforeShowDay: function (date) {
-                                var year = date.getFullYear();
-                                var mes = (date.getMonth() + 1);
-                                var month = (mes<9? '0'+mes: mes);
-                                var date = (date.getDate()<9? '0'+date.getDate(): date.getDate());
-                                var allDates =  year + '-' + month + '-' + date;
-                                return (response.data.indexOf(allDates) != -1?true:false);
+                                return (response.data.indexOf(getValidDate(date)) != -1?true:false);
                             }
                         });
-                        $('#datetimepicker2').datepicker('setDate', new Date());
-                        $('#datetimepicker2').datepicker('update');
-
-                        $('#datetimepicker3').datepicker('remove')
+                        $('#datetimepicker3').datepicker('remove');
+                        $('#datetimepicker3').val('');
                         $('#datetimepicker3').datetimepicker({
                             startView: 1,
                             format:'hh:ii',
                             language:  'es',
                             autoclose: true
                         });
-                        var d = new Date();
-                        $('#datetimepicker3').val(d.getHours()+':'+d.getMinutes());
+                        if(pdate && (response.data.indexOf(getValidDate(pdate)) != -1?true:false)){
+                            $('#datetimepicker2').datepicker('setDate', pdate);
+                            $('#datetimepicker2').datepicker('update');
+                        }else{
+                            alert('La fecha previamente seleccionadas no coincide con las fechas asignadas para este tratamiente por favor seleccione una.')
+                        }
+                        $('#datetimepicker3').val(hour);
                         $('#datetimepicker3').datetimepicker('update');
-                        $('#startBlock').text('Las reservas de este tratamiento en esta sucursal tienen dias no disponibles, parareceran dectivados al tratar de selecionarlos');
                     }else{
                         $('#datetimepicker2').datepicker('destroy')
                         $('#datetimepicker2').datepicker({
                             todayHighlight: true,
-                            startDate: new Date(),
+                            startDate: pdate,
                             format:'yyyy-mm-dd',
                             language:  'es',
                             autoclose: true,
                         });
-                        $('#datetimepicker2').datepicker('setDate', new Date());
+                        $('#datetimepicker2').datepicker('setDate', pdate);
                         $('#datetimepicker2').datepicker('update');
 
                         $('#datetimepicker3').datepicker('remove')
                         $('#datetimepicker3').datetimepicker({
-                            initialDate: new Date(),
+                            initialDate: pdate,
                             startView: 1,
                             format:'hh:ii',
                             language:  'es',
                             autoclose: true
                         });
-                        var d = new Date();
-                        $('#datetimepicker3').val(d.getHours()+':'+d.getMinutes());
+                        $('#datetimepicker3').val(hour);
                         $('#datetimepicker3').datetimepicker('update');
                         $('#startBlock').text('');
                     }

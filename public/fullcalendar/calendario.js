@@ -1,66 +1,27 @@
 $(document).ready(function() {
-    //cargando(cont);
-
     Date.prototype.getWeek = function() {
         var date = new Date(this.getTime());
         date.setHours(0, 0, 0, 0);
-        // Thursday in current week decides the year.
         date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-        // January 4 is always in week 1.
         var week1 = new Date(date.getFullYear(), 0, 4);
-        // Adjust to Thursday in week 1 and count number of weeks from date to week1.
         return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
     };
-
     initdatepicker();
-
     calendario();
-    // $('.form_datetime').datetimepicker({
-    //     //language:  'fr',
-    //     weekStart: 1,
-    //     todayBtn:  1,
-	// 	autoclose: 1,
-	// 	todayHighlight: 1,
-	// 	startView: 2,
-	// 	forceParse: 0,
-    //     showMeridian: 1
-    // });
-	// $('.form_date').datetimepicker({
-    //     language:  'fr',
-    //     weekStart: 1,
-    //     todayBtn:  1,
-	// 	autoclose: 1,
-	// 	todayHighlight: 1,
-	// 	startView: 2,
-	// 	minView: 2,
-	// 	forceParse: 0
-    // });
-	// $('.form_time').datetimepicker({
-    //     language:  'fr',
-    //     weekStart: 1,
-    //     todayBtn:  1,
-	// 	autoclose: 1,
-	// 	todayHighlight: 1,
-	// 	startView: 1,
-	// 	minView: 0,
-	// 	maxView: 1,
-	// 	forceParse: 0
-    // });
-
 });
 
 function initdatepicker() {
     $('#datetimepicker1').datepicker({
         format: 'yyyy-mm-dd',
-        language:  'es',
+        language: 'es',
         autoclose: true,
     });
     $('#datetimepicker2').datepicker({
         startDate: new Date(),
-        format:'yyyy-mm-dd',
-        language:  'es',
+        format: 'yyyy-mm-dd',
+        language: 'es',
         autoclose: true,
-        beforeShowDay: function (date){
+        beforeShowDay: function(date) {
             return false;
         }
     });
@@ -104,7 +65,7 @@ function cancelarR(id) {
     $('.modal').modal('hide');
     if (confirm("¿Está seguro que desea cancelar este calendario?") == true) {
         $.ajax({
-            url: '/estetica/public/reserva/cancelar/' + id ,
+            url: '/estetica/public/reserva/cancelar/' + id,
             type: 'POST',
             dataType: 'json',
             success: function(response) {
@@ -123,9 +84,9 @@ function cancelarR(id) {
 
 
 
-function actualizarCal(today){
+function actualizarCal(today) {
     var calendar = new Date($('#calendar').fullCalendar('getDate').format());
-    if(today.getMonth() != calendar.getMonth()){
+    if (today.getMonth() != calendar.getMonth()) {
         $("#calendar").fullCalendar('refetchEvents');
     }
 }
@@ -148,10 +109,10 @@ function calendario() {
         },
         locale: 'es',
         navLinks: true, // can click day/week names to navigate views
-        selectable: false,
+        selectable: true,
         selectHelper: true,
         defaultView: 'agendaWeek',
-        editable: true,
+        editable: false,
         hiddenDays: [0],
         allDayDefault: false,
         allDaySlot: false,
@@ -175,46 +136,46 @@ function calendario() {
                 <span><b>Anticipo:</b> ${calEvent.cliente_tratamiento.anticipo}</span><br>
                 <br><span><b>Tratamiento Reservado:</b> ${calEvent.tratamiento_nombre}</span><br>`);
             $('#mer').modal('show');
-            $('#mer').on('hidden.bs.modal', function (e) {
+            $('#mer').on('hidden.bs.modal', function(e) {
                 $('#fer')[0].reset();
                 $('#fer').attr('action', $('#fer').attr('action').replace(calEvent.id, ':id'))
             });
-            if(!calEvent.rotativo){
+            if (!calEvent.rotativo) {
                 $('#datetimepicker5').datepicker('destroy')
                 $('#datetimepicker5').datepicker({
                     startDate: new Date(),
-                    format:'yyyy-mm-dd',
-                    language:  'es',
+                    format: 'yyyy-mm-dd',
+                    language: 'es',
                     autoclose: true,
                 });
                 $('#datetimepicker7').datepicker('remove')
                 $('#datetimepicker7').datetimepicker({
                     startView: 1,
-                    format:'hh:ii',
-                    language:  'es',
+                    format: 'hh:ii',
+                    language: 'es',
                     autoclose: true
                 });
-            }else{
+            } else {
                 $('#datetimepicker5').datepicker('destroy')
                 $('#datetimepicker5').datepicker({
                     startDate: new Date(),
-                    format:'yyyy-mm-dd',
-                    language:  'es',
+                    format: 'yyyy-mm-dd',
+                    language: 'es',
                     autoclose: true,
-                    beforeShowDay: function (date) {
+                    beforeShowDay: function(date) {
                         var year = date.getFullYear();
                         var mes = (date.getMonth() + 1);
-                        var month = (mes<9? '0'+mes: mes);
-                        var date = (date.getDate()<9? '0'+date.getDate(): date.getDate());
-                        var allDates =  year + '-' + month + '-' + date;
-                        return (calEvent.valid_days.indexOf(allDates) != -1?true:false);
+                        var month = (mes < 9 ? '0' + mes : mes);
+                        var date = (date.getDate() < 9 ? '0' + date.getDate() : date.getDate());
+                        var allDates = year + '-' + month + '-' + date;
+                        return (calEvent.valid_days.indexOf(allDates) != -1 ? true : false);
                     }
                 });
                 $('#datetimepicker7').datepicker('remove')
                 $('#datetimepicker7').datetimepicker({
                     startView: 1,
-                    format:'hh:ii',
-                    language:  'es',
+                    format: 'hh:ii',
+                    language: 'es',
                     autoclose: true
                 });
             }
@@ -230,20 +191,26 @@ function calendario() {
             $('#fer').find('#cliente_tratamiento_id').val(calEvent.cliente_tratamiento_id);
             $('#mer #sr').on('click', function(event) {
                 $('#mcr #selectCliente').empty();
-                var optioncliente = $('<option selected>'+calEvent.cliente.nombre+'</option>').val(calEvent.cliente_id);
-                $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {id:calEvent.cliente_id});
-                document.fn_on_cliente_change = function () {
+                var optioncliente = $('<option selected>' + calEvent.cliente.nombre + '</option>').val(calEvent.cliente_id);
+                $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {
+                    id: calEvent.cliente_id
+                });
+                document.fn_on_cliente_change = function() {
                     $('#mer #ap').off('click');
                     $('#mer #sr').off('click');
                     $('#mcr #selectT').val(calEvent.cliente_tratamiento_id).trigger('change');
-                    $('#mcr #selectT').trigger('select2:selecting', { id: calEvent.cliente_tratamiento_id});
+                    $('#mcr #selectT').trigger('select2:selecting', {
+                        id: calEvent.cliente_tratamiento_id
+                    });
                     $('#mcr #sucursal_id').val(calEvent.sucursal_id).trigger('change');
                     $('#mcr #user_id').val(calEvent.user_id).trigger('change');
-                    $('#mcr #sucursal_id').trigger('select2:selecting', { id: calEvent.sucursal_id});
+                    $('#mcr #sucursal_id').trigger('select2:selecting', {
+                        id: calEvent.sucursal_id
+                    });
                 }
                 $('#mer').modal('hide');
                 $('#mcr').modal('show');
-                $('#mcr').on('hidden.bs.modal', function (e) {
+                $('#mcr').on('hidden.bs.modal', function(e) {
                     $('#fcr')[0].reset();
                     $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
                     $('#startBlock').text('');
@@ -253,17 +220,21 @@ function calendario() {
             });
             $('#mer #ap').on('click', function(event) {
                 $('#mab #selectCliente2').empty();
-                var optioncliente = $('<option selected>'+calEvent.cliente.nombre+'</option>').val(calEvent.cliente_id);
-                $('#mab #selectCliente2').append(optioncliente).trigger('select2:selecting', {id:calEvent.cliente_id});
-                document.fn_on_cliente_change = function () {
+                var optioncliente = $('<option selected>' + calEvent.cliente.nombre + '</option>').val(calEvent.cliente_id);
+                $('#mab #selectCliente2').append(optioncliente).trigger('select2:selecting', {
+                    id: calEvent.cliente_id
+                });
+                document.fn_on_cliente_change = function() {
                     $('#mer #ap').off('click');
                     $('#mer #sr').off('click');
                     $('#mab #selectT2').val(calEvent.cliente_tratamiento_id).trigger('change');
-                    $('#mab #selectT2').trigger('select2:selecting', { id: calEvent.cliente_tratamiento_id});
+                    $('#mab #selectT2').trigger('select2:selecting', {
+                        id: calEvent.cliente_tratamiento_id
+                    });
                 }
                 $('#mer').modal('hide');
                 $('#mab').modal('show');
-                $('#mab').on('hidden.bs.modal', function (e) {
+                $('#mab').on('hidden.bs.modal', function(e) {
                     $('#fab')[0].reset();
                     $('#selectCliente2, #selectT2').select2('val', -1);
                     $('#info2').empty();
@@ -271,20 +242,58 @@ function calendario() {
                 });
             });
         },
-         eventDrop: function(event, delta, revertFunc) {
+        select: function(start, end) {
+            start = new Date(start.format());
+            if(start < new Date()){
+                alert('Esta fecha y hora ya han trascurrido, Puede seleccionar cualquer fecha apartir de la fecha y hora actual');
+                $('#calendar').fullCalendar('unselect');
+                return ;
+            }
+            $('#datetimepicker2').datepicker('destroy')
+            $('#datetimepicker2').datepicker({
+                todayHighlight: true,
+                startDate: start,
+                format:'yyyy-mm-dd',
+                language:  'es',
+                autoclose: true,
+            });
+            $('#datetimepicker2').datepicker('setDate', start);
+            $('#datetimepicker2').datepicker('update');
+            $('#datetimepicker3').datepicker('remove')
+            $('#datetimepicker3').datetimepicker({
+                initialDate: start,
+                startView: 1,
+                format:'hh:ii',
+                language:  'es',
+                autoclose: true
+            });
+            var d = start;
+            $('#datetimepicker3').val(d.getHours()+':'+d.getMinutes());
+            $('#datetimepicker3').datetimepicker('update');
+            $('#mcr #sucursal_id').val($('#sucursal-filter').val()).trigger('change');
+            $('#mcr').on('hidden.bs.modal', function(e) {
+                $('#fcr')[0].reset();
+                $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
+                $('#startBlock').text('');
+                $('#info').empty();
+                $('#infot').empty();
+            });
+            $('#mcr').modal('show');
+        },
+        eventDrop: function(event, delta, revertFunc) {
             if (!confirm("Esta seguro que quiere realizar este cambio?")) {
                 revertFunc();
-            }else {
+            } else {
                 $.ajax({
-                    url: '/estetica/public/reserva/editar/'+ event.id,
+                    url: '/estetica/public/reserva/editar/' + event.id,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                      start: event.start.format("Y-MM-DD HH:mm:ss"),
-                      end: event.end.format("Y-MM-DD HH:mm:ss")
+                        start: event.start.format("Y-MM-DD HH:mm:ss"),
+                        end: event.end.format("Y-MM-DD HH:mm:ss")
                     },
                     success: function(response, status, jqXHR) {
-                      alert("Guardado");
+                        alert("Guardado");
                     },
                     error: function(response, status, errorThrown) {
                         if (response.status == 403) {
@@ -294,23 +303,21 @@ function calendario() {
                 });
             }
         },
-         eventResize: function(event, delta, revertFunc) {
-
+        eventResize: function(event, delta, revertFunc) {
             alert(event.title + " end is now " + event.end.format());
-
             if (!confirm("quiere hacer esto?")) {
                 revertFunc();
-            }else {
+            } else {
                 $.ajax({
-                    url: '/estetica/public/reserva/editar/'+ event.id,
+                    url: '/estetica/public/reserva/editar/' + event.id,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                      start: event.start.format("Y-MM-DD HH:mm:ss"),
-                      end: event.end.format("Y-MM-DD HH:mm:ss")
+                        start: event.start.format("Y-MM-DD HH:mm:ss"),
+                        end: event.end.format("Y-MM-DD HH:mm:ss")
                     },
                     success: function(response, status, jqXHR) {
-                      alert("Guardado");
+                        alert("Guardado");
                     },
                     error: function(response, status, errorThrown) {
                         if (response.status == 403) {
@@ -328,18 +335,18 @@ function calendario() {
                 type: 'GET',
                 dataType: 'json',
                 data: {
-                  start: start.toISOString().split('T')[0],
-                  end: end.toISOString().split('T')[0],
-                  sucursal: $('#sucursal-filter').val(),
-                  estado: $('#estado-filter').val()
+                    start: start.toISOString().split('T')[0],
+                    end: end.toISOString().split('T')[0],
+                    sucursal: $('#sucursal-filter').val(),
+                    estado: $('#estado-filter').val()
                 },
                 success: function(response, status, jqXHR) {
                     var events = response;
                     for (var even of events) {
-                        if(even.estado === 'realizada'){
+                        if (even.estado === 'realizada') {
                             even.color = '#00796B';
                         }
-                        if(even.estado === 'cancelada'){
+                        if (even.estado === 'cancelada') {
                             even.color = '#455A64';
                         }
                     }
@@ -367,7 +374,7 @@ function calendario() {
 
     $('#acc').click(function() {
         $("#mcc").modal('show');
-        $('#mcc').on('hidden.bs.modal', function (e) {
+        $('#mcc').on('hidden.bs.modal', function(e) {
             $('#fcc')[0].reset();
             $('#fcc').find('#datetimepicker1').val('');
 
@@ -383,7 +390,7 @@ function calendario() {
     $('#acr').click(function() {
         $('#mcr #sucursal_id').val($('#sucursal-filter').val()).trigger('change');
         $("#mcr").modal('show');
-        $('#mcr').on('hidden.bs.modal', function (e) {
+        $('#mcr').on('hidden.bs.modal', function(e) {
             $('#fcr')[0].reset();
             $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
             $('#startBlock').text('');
@@ -394,7 +401,7 @@ function calendario() {
 
     $('#aab').click(function() {
         $("#mab").modal('show');
-        $('#mab').on('hidden.bs.modal', function (e) {
+        $('#mab').on('hidden.bs.modal', function(e) {
             $('#fab')[0].reset();
             $('#selectCliente2, #selectT2').select2('val', -1);
         });
@@ -408,48 +415,48 @@ function calendario() {
     })
 }
 
-function afcc(close){
-    if($("#fcc")[0].checkValidity()) {
+function afcc(close) {
+    if ($("#fcc")[0].checkValidity()) {
         $('#fcc').ajaxSubmit({
-            success: function () {
+            success: function() {
                 $('#datatable-clientes').DataTable().search($('#fcc #nombre').val()).draw();
                 $("#mcc").modal('hide');
-                if(!close){
-                    $("#mat #btn_cr").addClass('disabled').on('click',function () {});
+                if (!close) {
+                    $("#mat #btn_cr").addClass('disabled').on('click', function() {});
                     $("#mat").modal('show');
                 }
                 $("#fcc")[0].reset();
             },
-            error: function () {
+            error: function() {
                 console.log('error');
             }
         });
-    }else {
+    } else {
         alert('Los campos no son validos')
     }
 }
 
-function afcr(){
-    if($("#fcr")[0].checkValidity()) {
+function afcr() {
+    if ($("#fcr")[0].checkValidity()) {
         $('#fcr').ajaxSubmit({
-            success: function () {
+            success: function() {
                 $("#mcr").modal('hide');
                 $('#fcr')[0].reset();
                 $("#calendar").fullCalendar('refetchEvents');
             },
-            error: function () {
+            error: function() {
                 console.log('error');
             }
         });
-    }else {
+    } else {
         alert('Los campos no son validos')
     }
 }
 
-function afcr2(url, url2){
-    if($("#fcr")[0].checkValidity()) {
+function afcr2(url, url2) {
+    if ($("#fcr")[0].checkValidity()) {
         $('#fcr').ajaxSubmit({
-            success: function () {
+            success: function() {
                 $.ajax({
                     url: url.replace(':id', $('#selectCliente').val()),
                     type: 'GET',
@@ -464,7 +471,7 @@ function afcr2(url, url2){
                     }
                 });
                 $.ajax({
-                    url:  url2.replace(':id', $('#selectT').val()),
+                    url: url2.replace(':id', $('#selectT').val()),
                     type: 'GET',
                     success: function(response, status, jqXHR) {
                         $('#infot').html(`
@@ -482,68 +489,75 @@ function afcr2(url, url2){
                 $('#fcr #startBlock').text('');
                 $("#calendar").fullCalendar('refetchEvents');
             },
-            error: function (e) {
-                if(e.status === 400){
+            error: function(e) {
+                if (e.status === 400) {
                     alert(e.responseText);
                 }
-                console.log('error',e);
+                console.log('error', e);
             }
         });
-    }else {
+    } else {
         alert('Los campos no son validos')
     }
 }
 
-function afer(){
-    if($("#fer")[0].checkValidity()) {
+function afer() {
+    if ($("#fer")[0].checkValidity()) {
         $('#fer').ajaxSubmit({
-            success: function () {
+            success: function() {
                 $("#mer").modal('hide');
                 $("#fer")[0].reset();
                 $("#calendar").fullCalendar('refetchEvents');
             },
-            error: function () {
+            error: function() {
                 console.log('error');
             }
         });
-    }else {
-        alert('Los campos no son validos')
-    }
-}
-function afab(){
-    if($("#fab")[0].checkValidity()) {
-        $('#fab').ajaxSubmit({
-            success: function () {
-                $("#mab").modal('hide');
-                $("#fab")[0].reset();
-                $("#calendar").fullCalendar('refetchEvents');
-            },
-            error: function (e) {
-                alert(e.responseText);
-                $("#mab").modal('hide');
-            }
-        });
-    }else {
+    } else {
         alert('Los campos no son validos')
     }
 }
 
-function attor(data){
-    if(data){
+function afab() {
+    if ($("#fab")[0].checkValidity()) {
+        $('#fab').ajaxSubmit({
+            success: function() {
+                $("#mab").modal('hide');
+                $("#fab")[0].reset();
+                $("#calendar").fullCalendar('refetchEvents');
+            },
+            error: function(e) {
+                alert(e.responseText);
+                $("#mab").modal('hide');
+            }
+        });
+    } else {
+        alert('Los campos no son validos')
+    }
+}
+
+function attor(data) {
+    if (data) {
         $('#mcr #selectCliente').empty();
-        var optioncliente = $('<option selected>'+data.response.nombre+'</option>').val(data.response.id);
-        $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {id:data.response.id});
-        document.fn_on_cliente_change = function () {
+        var optioncliente = $('<option selected>' + data.response.nombre + '</option>').val(data.response.id);
+        $('#mcr #selectCliente').append(optioncliente).trigger('select2:selecting', {
+            id: data.response.id
+        });
+        document.fn_on_cliente_change = function() {
             var sucursal = parseInt($('#sucursal-filter').val());
             $('#mcr #selectT').select2().val(data.response.pivot.id).trigger('change');
-            $('#mcr #selectT').trigger('select2:selecting', { id: data.response.pivot.id});
+            $('#mcr #selectT').trigger('select2:selecting', {
+                id: data.response.pivot.id
+            });
             $('#mcr #sucursal_id').val(sucursal).trigger('change');
-            $('#mcr #sucursal_id').trigger('select2:selecting', { id: sucursal});
+            $('#mcr #sucursal_id').trigger('select2:selecting', {
+                id: sucursal
+            });
         }
     }
     $('#mat').modal('hide');
     $('#mcr').modal('show');
-    $('#mcr').on('hidden.bs.modal', function (e) {
+    $('#mcr').on('hidden.bs.modal', function(e) {
         $('#fcr')[0].reset();
         $('#selectCliente, #selectT, #sucursal_id, #user_id').select2('val', -1);
         $('#startBlock').text('');
@@ -552,11 +566,11 @@ function attor(data){
     });
 }
 
-function asignar(cliente_id, cliente_name, urlD){
-    var tratamiento_id = parseInt($('#tratamiento-filter-'+cliente_id).val());
-    var tratamiento_name = $('#tratamiento-filter-'+cliente_id+' option:selected').text();
-    if(tratamiento_name != '----'){
-        if(confirm('Esta seguro de asignar el tratamiento '+tratamiento_name+' al cliente '+cliente_name)){
+function asignar(cliente_id, cliente_name, urlD) {
+    var tratamiento_id = parseInt($('#tratamiento-filter-' + cliente_id).val());
+    var tratamiento_name = $('#tratamiento-filter-' + cliente_id + ' option:selected').text();
+    if (tratamiento_name != '----') {
+        if (confirm('Esta seguro de asignar el tratamiento ' + tratamiento_name + ' al cliente ' + cliente_name)) {
             $.ajax({
                 url: urlD,
                 type: 'GET',
@@ -564,11 +578,13 @@ function asignar(cliente_id, cliente_name, urlD){
                     c: cliente_id,
                     t: tratamiento_id
                 },
-
                 success: function(response, status, jqXHR) {
                     alert('Tratamiento asignado')
                     $('#mat #btn_cr').removeClass('disabled').on('click', function() {
-                        attor({tratamiento_name, response});
+                        attor({
+                            tratamiento_name,
+                            response
+                        });
                     })
                 },
                 error: function(response, status, errorThrown) {
@@ -588,15 +604,38 @@ function clienteTable(lan, url, fnSelect, fnBtn) {
             url: lan
         },
         ajax: url,
-        columns: [
-            { data: 'nombre', name: 'nombre' },
-            { data: 'telefono', name: 'telefono' },
-            { data: 'identificacion', name: 'identificacion' },
-            { data: 'id', name: 'id', searchable: false, orderable: false, render: fnSelect},
-            { data: 'id', name: 'id', searchable: false, orderable: false, render: fnBtn}
+        columns: [{
+                data: 'nombre',
+                name: 'nombre'
+            },
+            {
+                data: 'telefono',
+                name: 'telefono'
+            },
+            {
+                data: 'identificacion',
+                name: 'identificacion'
+            },
+            {
+                data: 'id',
+                name: 'id',
+                searchable: false,
+                orderable: false,
+                render: fnSelect
+            },
+            {
+                data: 'id',
+                name: 'id',
+                searchable: false,
+                orderable: false,
+                render: fnBtn
+            }
         ],
-        drawCallback: function( settings ) {
-            $('.select2filter').select2({ dropdownParent: $("#mat"), width: '230px'});
+        drawCallback: function(settings) {
+            $('.select2filter').select2({
+                dropdownParent: $("#mat"),
+                width: '230px'
+            });
         }
     });
 }

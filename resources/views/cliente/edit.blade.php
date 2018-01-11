@@ -31,11 +31,11 @@
 </div>
 <div class="form-group">
     {!! Form::label('identificacion', 'DNI') !!}
-    {!! Form::text('identificacion', $cliente->identificacion,  ['class' => 'form-control', 'required' , 'placeholder' => '111xxx']) !!}
+    {!! Form::text('identificacion', $cliente->identificacion,  ['class' => 'form-control', 'placeholder' => '111xxx']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('email', 'Correo electrónico') !!}
-    {!! Form::email('email', $cliente->email, ['class' => 'form-control', 'required', 'placeholder' => 'ejemplo@gmail.com']) !!}
+    {!! Form::email('email', $cliente->email, ['class' => 'form-control', 'placeholder' => 'ejemplo@gmail.com']) !!}
 </div>
 {{-- <div class="form-group">
     {!! Form::label('localidad', 'Localidad') !!}
@@ -47,7 +47,7 @@
         <span class="input-group-addon">
             <span class="fa fa-calendar"></span>
         </span>
-        {!! Form::text('fecha_nacimiento', $cliente->fecha_nacimiento, ['class' => 'form-control', 'required', 'readonly', 'id' => 'datetimepicker10']) !!}
+        {!! Form::text('fecha_nacimiento', $cliente->fecha_nacimiento, ['class' => 'form-control', 'readonly', 'id' => 'datetimepicker10']) !!}
     </div>
 </div>
 {{-- <div class="form-group">
